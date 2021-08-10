@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/info">
+        <file>hostinfo.txt</file>
+        <file>login.txt</file>
+    </qresource>
+    <qresource prefix="/certs">
+        <file>aqueous.cert</file>
+    </qresource>
+</RCC>

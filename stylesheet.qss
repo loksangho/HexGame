@@ -1,0 +1,10 @@
+.HexButton{
+	border-image:url(":/images/hexagon.png");
+	background-color: transparent;
+	background-repeat: none;  
+	border: none;
+}
+
+.HexButton:disabled:hover {
+    background: transparent;
+}

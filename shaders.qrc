@@ -1,0 +1,33 @@
+<RCC>
+    <qresource prefix="/default">
+        <file>default.frag</file>
+        <file>default.vert</file>
+        <file>light.frag</file>
+        <file>light.vert</file>
+    </qresource>
+    <qresource prefix="/models">
+        <file>cube_robot/scene.bin</file>
+        <file>cube_robot/scene.gltf</file>
+        <file>cube_robot/textures/skin_robot.png</file>
+        <file>cube_robot/advancedCharacter.gltf</file>
+        <file>cube_robot/robot.mtl</file>
+        <file>cube_robot/robot.dae</file>
+        <file>cube_robot/skin_robot.png</file>
+        <file>cube_robot/robot.glb</file>
+        <file>cube_robot/robot.fbx</file>
+        <file>hexagon3D/hexagon_baseColor_blue.png</file>
+        <file>hexagon3D/hexagon_baseColor_neutral.png</file>
+        <file>hexagon3D/hexagon_baseColor_red.png</file>
+        <file>hexagon3D/hexagon3D_blender_blue.dae</file>
+        <file>hexagon3D/hexagon3D_blender_red.dae</file>
+        <file>hexagon3D/hexagon3D_blender.dae</file>
+        <file>sphere/sphere_skin.png</file>
+        <file>sphere/sphere.dae</file>
+        <file>table/Painted_wood_Base_Color.png</file>
+        <file>table/table.dae</file>
+        <file>hexagon3D/blue_blocks.dae</file>
+        <file>hexagon3D/red_blocks.dae</file>
+        <file>dice/dice.dae</file>
+        <file>dice/Old_Red_Base_Color.png</file>
+    </qresource>
+</RCC>

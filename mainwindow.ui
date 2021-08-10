@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1920</width>
+    <height>1080</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Game of Hex</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QLineEdit" name="lineEdit">
+    <property name="geometry">
+     <rect>
+      <x>1310</x>
+      <y>970</y>
+      <width>381</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="MyWidget" name="boardWidget" native="true">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>160</y>
+      <width>1021</width>
+      <height>811</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="startGameButton">
+    <property name="geometry">
+     <rect>
+      <x>1300</x>
+      <y>400</y>
+      <width>281</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Copperplate</family>
+      <pointsize>28</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Play with AI</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>1300</x>
+      <y>540</y>
+      <width>281</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Copperplate</family>
+      <pointsize>28</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Play Online</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_2">
+    <property name="geometry">
+     <rect>
+      <x>1300</x>
+      <y>830</y>
+      <width>281</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Copperplate</family>
+      <pointsize>28</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>3D Mode</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1920</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MyWidget</class>
+   <extends>QWidget</extends>
+   <header>mywidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

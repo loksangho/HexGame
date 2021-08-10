@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>OnlineGameBoardWindow</class>
+ <widget class="QMainWindow" name="OnlineGameBoardWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1920</width>
+    <height>1080</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Game of Hex</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="MyWidget" name="boardWidget" native="true">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>150</y>
+      <width>1011</width>
+      <height>731</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="readyBbutton">
+    <property name="geometry">
+     <rect>
+      <x>1400</x>
+      <y>100</y>
+      <width>211</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Copperplate</family>
+      <pointsize>36</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Ready</string>
+    </property>
+   </widget>
+   <widget class="QSplitter" name="splitter">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>50</y>
+      <width>941</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+    <widget class="QLabel" name="creatorLabel">
+     <property name="font">
+      <font>
+       <family>Copperplate</family>
+       <pointsize>28</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Unknown Player</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="vsLabel">
+     <property name="font">
+      <font>
+       <family>Copperplate</family>
+       <pointsize>28</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>VS</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="opponentLabel">
+     <property name="font">
+      <font>
+       <family>Copperplate</family>
+       <pointsize>28</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Unknown Player</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1920</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MyWidget</class>
+   <extends>QWidget</extends>
+   <header>mywidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

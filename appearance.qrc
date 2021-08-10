@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>fonts/Copperplate.ttf</file>
+        <file>fonts/CopperplateBold.ttf</file>
+    </qresource>
+</RCC>

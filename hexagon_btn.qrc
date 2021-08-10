@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/images">
+        <file alias="hexagon.png">hexagon.png</file>
+        <file alias="hexagon_alpha.png">hexagon_alpha.png</file>
+        <file alias="hexagon_red.png">hexagon_red.png</file>
+        <file alias="hexagon_blue.png">hexagon_blue.png</file>
+    </qresource>
+    <qresource prefix="/qss">
+        <file>stylesheet.qss</file>
+    </qresource>
+</RCC>
