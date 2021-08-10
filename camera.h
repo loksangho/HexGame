@@ -2,13 +2,15 @@
 #define CAMERA_CLASS_H
 #include "qglobal.h"
 
+
+#define GL_GLEXT_PROTOTYPES
+
 #ifdef Q_OS_WIN
     #include<QtGui/QOpenGLFunctions>
 #elif defined(Q_OS_MACX) || defined(Q_OS_LINUX)
     #include<QtGui/QOpenGLFunctions>
 #endif
 
-#define GL_GLEXT_PROTOTYPES
 
 
 #include<glm/glm.hpp>

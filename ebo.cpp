@@ -24,7 +24,7 @@ glGenBuffers(1, &ID);
 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
 glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
 
-#elif defined(Q_OS_LINUX) ||
+#elif defined(Q_OS_LINUX)
     glGenBuffers(1, &ID);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);

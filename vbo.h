@@ -1,7 +1,7 @@
 #ifndef VBO_H
 #define VBO_H
-#define GL_GLEXT_PROTOTYPES
 #include "qglobal.h"
+#define GL_GLEXT_PROTOTYPES
 
 
 #ifdef Q_OS_WIN

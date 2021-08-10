@@ -10,7 +10,7 @@ VBO::VBO(std::vector<Vertex>& vertices)
    // std::cout << vertices.size() << " " << vertices.size() * sizeof(Vertex) << std::endl;
     glBufferDataARB(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
 
-#elif defined(Q_OS_WIN) || defined(Q_OS_LINUX)
+#elif defined(Q_OS_WIN)
     PFNGLGENBUFFERSPROC glGenBuffers;
     glGenBuffers = (PFNGLGENBUFFERSPROC) wglGetProcAddress("glGenBuffers");
 
@@ -20,10 +20,13 @@ VBO::VBO(std::vector<Vertex>& vertices)
     PFNGLBUFFERDATAPROC glBufferData;
     glBufferData = (PFNGLBUFFERDATAPROC) wglGetProcAddress("glBufferData");
 
+    glGenBuffers(1, &ID);
+    glBindBuffer(GL_ARRAY_BUFFER, ID);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
+#elif defined(Q_OS_LINUX)
 
     glGenBuffers(1, &ID);
     glBindBuffer(GL_ARRAY_BUFFER, ID);
-   // std::cout << vertices.size() << " " << vertices.size() * sizeof(Vertex) << std::endl;
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
 #endif
 

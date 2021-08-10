@@ -2,6 +2,9 @@
 #include <iostream>
 #include "qglobal.h"
 
+#define GL_GLEXT_PROTOTYPES
+
+
 VAO::VAO(){
 #ifdef Q_OS_MACX
     glGenVertexArraysAPPLE(1, &ID);
@@ -13,7 +16,7 @@ VAO::VAO(){
 
     glGenVertexArrays(1, &ID);
 #elif defined(Q_OS_LINUX)
-    glGenVertexArraysOES(1, &ID);
+    glGenVertexArrays(1, &ID);
 #endif
 }
 
@@ -55,7 +58,7 @@ glBindVertexArray = (PFNGLBINDVERTEXARRAYPROC) wglGetProcAddress("glBindVertexAr
 
     glBindVertexArray(ID);
 #elif defined(Q_OS_LINUX)
-    glBindVertexArrayOES(ID);
+    glBindVertexArray(ID);
 #endif
 }
 void VAO::Unbind(){
@@ -67,7 +70,7 @@ glBindVertexArray = (PFNGLBINDVERTEXARRAYPROC) wglGetProcAddress("glBindVertexAr
 
     glBindVertexArray(0);
 #elif defined(Q_OS_LINUX)
-    glBindVertexArrayOES(0);
+    glBindVertexArray(0);
 #endif
 
 }
@@ -81,6 +84,6 @@ glDeleteVertexArrays = (PFNGLDELETEVERTEXARRAYSPROC) wglGetProcAddress("glDelete
 
     glDeleteVertexArrays(1, &ID);
 #elif defined(Q_OS_LINUX)
-    glDeleteVertexArraysOES(1, &ID);
+    glDeleteVertexArrays(1, &ID);
 #endif
 }
