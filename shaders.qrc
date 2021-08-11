@@ -27,7 +27,5 @@
         <file>table/table.dae</file>
         <file>hexagon3D/blue_blocks.dae</file>
         <file>hexagon3D/red_blocks.dae</file>
-        <file>dice/dice.dae</file>
-        <file>dice/Old_Red_Base_Color.png</file>
     </qresource>
 </RCC>

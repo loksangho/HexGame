@@ -237,7 +237,7 @@ void Model::Draw(Shader& shader,Camera& camera, glm::mat4 matrices_mesh)
     {
         meshes[i].Mesh::Draw(shader, camera, matricesMeshes[i]*matrices_mesh);
     }
-#ifdef Q_OS_MACX
+#if defined(Q_OS_MACX) || defined(Q_OS_UNIX)
     std::vector<Vertex> vertices;
 
     std::vector<GLuint> indices;

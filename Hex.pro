@@ -1,4 +1,4 @@
-QT       += core gui quickwidgets
+QT       += core gui quickwidgets opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -119,7 +119,7 @@ macx {
 
 }
 
-unix {
+unix:!macx {
     QT_QPA_PLATFORM=wayland
 
     QMAKE_CXXFLAGS += -std=c++11
