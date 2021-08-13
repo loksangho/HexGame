@@ -47,11 +47,11 @@ Texture::Texture(const char* image, const char* texType, GLuint slot)
 
     // Generates an OpenGL texture object
 #ifdef Q_OS_WIN
-    PFNGLACTIVETEXTUREPROC glActiveTexture;
-    glActiveTexture = (PFNGLACTIVETEXTUREPROC) wglGetProcAddress("glActiveTexture");
+    //PFNGLACTIVETEXTUREPROC glActiveTexture;
+    //glActiveTexture = (PFNGLACTIVETEXTUREPROC) wglGetProcAddress("glActiveTexture");
 
-    PFNGLGENERATEMIPMAPPROC glGenerateMipmap;
-    glGenerateMipmap = (PFNGLGENERATEMIPMAPPROC) wglGetProcAddress("glGenerateMipmap");
+    //PFNGLGENERATEMIPMAPPROC glGenerateMipmap;
+    //glGenerateMipmap = (PFNGLGENERATEMIPMAPPROC) wglGetProcAddress("glGenerateMipmap");
 
 
 
@@ -134,11 +134,11 @@ Texture::Texture(const char* image, const char* texType, GLuint slot)
 void Texture::texUnit(Shader& shader, const char* uniform, GLuint unit)
 {
 #ifdef Q_OS_WIN
-    PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
-    glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC) wglGetProcAddress("glGetUniformLocation");
+    //PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
+    //glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC) wglGetProcAddress("glGetUniformLocation");
 
-    PFNGLUNIFORM1IPROC glUniform1i;
-    glUniform1i = (PFNGLUNIFORM1IPROC) wglGetProcAddress("glUniform1i");
+    //PFNGLUNIFORM1IPROC glUniform1i;
+    //glUniform1i = (PFNGLUNIFORM1IPROC) wglGetProcAddress("glUniform1i");
 #endif
 
 
@@ -153,8 +153,8 @@ void Texture::texUnit(Shader& shader, const char* uniform, GLuint unit)
 void Texture::Bind()
 {
 #ifdef Q_OS_WIN
-    PFNGLACTIVETEXTUREPROC glActiveTexture;
-    glActiveTexture = (PFNGLACTIVETEXTUREPROC) wglGetProcAddress("glActiveTexture");
+    //PFNGLACTIVETEXTUREPROC glActiveTexture;
+    //glActiveTexture = (PFNGLACTIVETEXTUREPROC) wglGetProcAddress("glActiveTexture");
 #endif
 
     glActiveTexture(GL_TEXTURE0 + unit);

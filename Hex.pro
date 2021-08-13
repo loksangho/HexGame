@@ -21,6 +21,9 @@ SOURCES += \
     camera.cpp \
     connection_metadata.cpp \
     customdialog.cpp \
+    d3d11mesh.cpp \
+    d3d11shaderclass.cpp \
+    d3d11texture.cpp \
     ebo.cpp \
     graph.cpp \
     hexboard.cpp \
@@ -47,10 +50,14 @@ SOURCES += \
 
 HEADERS += \
     Colour.h \
+    Vertex.h \
     boardview3d.h \
     camera.h \
     connection_metadata.h \
     customdialog.h \
+    d3d11mesh.h \
+    d3d11shaderclass.h \
+    d3d11texture.h \
     ebo.h \
     graph.h \
     hexboard.h \
@@ -88,9 +95,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     appearance.qrc \
+    graphicsunderqml.qrc \
     hexagon_btn.qrc \
     host_info.qrc \
-    openglunderqml.qrc \
     shaders.qrc
 
 
@@ -122,6 +129,8 @@ macx {
 unix:!macx {
     QT_QPA_PLATFORM=wayland
 
+    QT -= opengl
+
     QMAKE_CXXFLAGS += -std=c++11
     QMAKE_CXXFLAGS += -static-libgcc
 
@@ -142,13 +151,18 @@ unix:!macx {
 win32 {
     #QMAKE_CXXFLAGS += -D_WIN32_WINNT=0x0601
 
+
     INCLUDEPATH += "C:/Users/loksa/Documents/Hex/glm/"
     INCLUDEPATH += "C:/Users/loksa/Documents/Hex/websocketpp/"
     INCLUDEPATH += "C:/Users/loksa/Documents/Hex/json/include/nlohmann"
     INCLUDEPATH += "C:/msys64/mingw64/include/"
     INCLUDEPATH += "C:/msys64/mingw64/include/bullet/"
+    INCLUDEPATH += "C:/Users/loksa/Documents/mesa-21.2.0/mesa-21.2.0/include"
 
+    LIBS += libopengl32
     LIBS += -LC:/msys64/mingw64/lib
+    LIBS += -LC:/Users/loksa/Documents/mesa-21.2.0/src/gallium/targets
+    LIBS += -ld3d11 -ld3dcompiler
     LIBS += -llibboost_system-mt -llibboost_thread-mt -lopengl32 -lcurl -lassimp -lBulletSoftBody -lBulletDynamics -lBulletCollision -lLinearMath -lws2_32 -lwsock32
     #LIBS += -llibboost_system-vc142-mt-gd-x64-1_76 -llibEGL.dll -llibGLESv2.dll -llibcurl -lassimp-vc142-mt -lBulletDynamics -lBulletSoftBody -lBulletCollision -lLinearMath
 

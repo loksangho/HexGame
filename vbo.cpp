@@ -11,14 +11,14 @@ VBO::VBO(std::vector<Vertex>& vertices)
     glBufferDataARB(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
 
 #elif defined(Q_OS_WIN)
-    PFNGLGENBUFFERSPROC glGenBuffers;
-    glGenBuffers = (PFNGLGENBUFFERSPROC) wglGetProcAddress("glGenBuffers");
+    //PFNGLGENBUFFERSARBPROC glGenBuffersARB;
+    //glGenBuffersARB = (PFNGLGENBUFFERSARBPROC) wglGetProcAddress("glGenBuffersARB");
 
-    PFNGLBINDBUFFERPROC glBindBuffer;
-    glBindBuffer = (PFNGLBINDBUFFERPROC) wglGetProcAddress("glBindBuffer");
+    //PFNGLBINDBUFFERARBPROC glBindBufferARB;
+    //glBindBufferARB = (PFNGLBINDBUFFERARBPROC) wglGetProcAddress("glBindBufferARB");
 
-    PFNGLBUFFERDATAPROC glBufferData;
-    glBufferData = (PFNGLBUFFERDATAPROC) wglGetProcAddress("glBufferData");
+    //PFNGLBUFFERDATAARBPROC glBufferDataARB;
+    //glBufferDataARB = (PFNGLBUFFERDATAARBPROC) wglGetProcAddress("glBufferDataARB");
 
     glGenBuffers(1, &ID);
     glBindBuffer(GL_ARRAY_BUFFER, ID);
@@ -40,8 +40,8 @@ void VBO::Bind()
     glBindBufferARB(GL_ARRAY_BUFFER, ID);
 
 #elif defined(Q_OS_WIN)
-    PFNGLBINDBUFFERPROC glBindBuffer;
-    glBindBuffer = (PFNGLBINDBUFFERPROC) wglGetProcAddress("glBindBuffer");
+    //PFNGLBINDBUFFERARBPROC glBindBufferARB;
+    //glBindBufferARB = (PFNGLBINDBUFFERARBPROC) wglGetProcAddress("glBindBufferARB");
 
 
     glBindBuffer(GL_ARRAY_BUFFER, ID);
@@ -58,8 +58,9 @@ void VBO::Unbind()
 
 #elif defined(Q_OS_WIN)
 
-    PFNGLBINDBUFFERPROC glBindBuffer;
-    glBindBuffer = (PFNGLBINDBUFFERPROC) wglGetProcAddress("glBindBuffer");
+    //PFNGLBINDBUFFERARBPROC glBindBufferARB;
+    //glBindBufferARB = (PFNGLBINDBUFFERARBPROC) wglGetProcAddress("glBindBufferARB");
+
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 #elif defined(Q_OS_LINUX)
@@ -74,8 +75,8 @@ void VBO::Delete()
     glDeleteBuffersARB(1, &ID);
 
 #elif defined(Q_OS_WIN)
-    PFNGLDELETEBUFFERSPROC glDeleteBuffers;
-    glDeleteBuffers = (PFNGLDELETEBUFFERSPROC) wglGetProcAddress("glDeleteBuffers");
+    //PFNGLDELETEBUFFERSARBPROC glDeleteBuffersARB;
+    //glDeleteBuffersARB = (PFNGLDELETEBUFFERSARBPROC) wglGetProcAddress("glDeleteBuffersARB");
 
     glDeleteBuffers(1, &ID);
 

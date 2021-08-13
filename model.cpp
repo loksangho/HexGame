@@ -5,7 +5,12 @@
 #include <QFile>
 #include <QtCore/QResource>
 
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
 Model::Model(const char* file)
+#elif defined(Q_OS_WIN)
+Model::Model(D3D11Shader* shader, const char* file)
+#endif
+
 {
     // Make a JSON object
     std::string text = get_file_contents(file);
@@ -29,7 +34,7 @@ Model::Model(const char* file)
     QByteArray file_bytes = file_q.readAll();
     file_q.close();
     // const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
-    const aiScene *scene = importer.ReadFileFromMemory(file_bytes.data(), file_bytes.size(), aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType | aiProcess_FindInvalidData | aiProcess_FindDegenerates);
+    const aiScene *scene = importer.ReadFileFromMemory(file_bytes.data(), file_bytes.size(), aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
 
     // If the import failed, report it
     if( !scene) {
@@ -39,9 +44,9 @@ Model::Model(const char* file)
 
     // Now we can access the file's contents.
     if(scene->HasMeshes()) {
-        //std::cout << scene->mNumMeshes << std::endl;
+        unsigned int total_num_of_meshes = scene->mNumMeshes;
+        for(unsigned int i=0; i < total_num_of_meshes; i++) {
 
-        for(int i=0; i< scene->mNumMeshes;i++) {
             aiMesh* mesh = scene->mMeshes[i];
             aiVector3D* normals = nullptr;
 
@@ -91,7 +96,7 @@ Model::Model(const char* file)
             int n=0;
             //std::cout << mesh->mName.C_Str() << std::endl;
             while(current_node != NULL) {
-            //    std::cout << n << std::endl;
+                //std::cout << n << std::endl;
                 globalMat = current_node->mTransformation * globalMat;
                 current_node = current_node->mParent;
                 n++;
@@ -107,9 +112,17 @@ Model::Model(const char* file)
             //
             //}
 
+
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
             std::vector<Texture> textures;
-            if(scene->HasMaterials()) {
-                aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+#elif defined(Q_OS_WIN)
+            std::vector<D3D11Texture> textures;
+#endif
+
+
+            assert(scene->HasMaterials());
+            //if(scene->HasMaterials()) {
+              aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
                 aiString* path_diff = new aiString();
                 aiString* path_spec = new aiString();
 
@@ -121,8 +134,15 @@ Model::Model(const char* file)
                 if(material->GetTextureCount(aiTextureType_SPECULAR) > 0) {
                     material->GetTexture(aiTextureType_SPECULAR, 0, path_spec);
                 }
-                Texture* diff_tex;
-                Texture* spec_tex;
+
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
+                //Texture* diff_tex;
+                //Texture* spec_tex;
+#elif defined(Q_OS_WIN)
+
+                //D3D11Texture* diff_tex = nullptr;
+                //D3D11Texture* spec_tex = nullptr;
+#endif
                 std::string texPath_diff = std::string(path_diff->C_Str());
                 std::string texPath_spec = std::string(path_diff->C_Str());
 
@@ -142,37 +162,54 @@ Model::Model(const char* file)
                 if (!skip)
                 {
                     if(path_diff->length != 0) {
-                        diff_tex = new Texture((fileDirectory + path_diff->data).c_str(), "diffuse" ,loadedTex.size());
-                        textures.push_back(*diff_tex);
-                        loadedTex.push_back(*diff_tex);
+
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
+                        Texture diff_tex((fileDirectory + path_diff->data).c_str(), "diffuse" ,loadedTex.size());
+#elif defined(Q_OS_WIN)
+                        D3D11Texture diff_tex(shader, (fileDirectory + path_diff->data).c_str(), "diffuse" ,loadedTex.size());
+
+#endif
+                        textures.push_back(diff_tex);
+                        loadedTex.push_back(diff_tex);
                         loadedTexName.push_back(texPath_diff);
-                        delete diff_tex;
+
 
 
                     }
                     if(path_spec->length != 0) {
-                        spec_tex = new Texture((fileDirectory + path_spec->data).c_str(), "specular" ,loadedTex.size());
-                        textures.push_back(*spec_tex);
-                        loadedTex.push_back(*spec_tex);
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
+                        Texture spec_tex((fileDirectory + path_spec->data).c_str(), "specular" ,loadedTex.size());
+#elif defined(Q_OS_WIN)
+                        D3D11Texture spec_tex(shader, (fileDirectory + path_spec->data).c_str(), "specular" ,loadedTex.size());
+#endif
+                        textures.push_back(spec_tex);
+                        loadedTex.push_back(spec_tex);
                         loadedTexName.push_back(texPath_spec);
-                        delete spec_tex;
 
                     }
                 }
+
                 delete path_diff;
                 delete path_spec;
 
-            }
+            //}
 
 
             std::vector<Vertex> vertices;
+
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
             std::vector<GLuint> indices;
-            if(faces!=nullptr && positions!=nullptr && normals!=nullptr & texCoords!=nullptr){
+#elif defined(Q_OS_WIN)
+            std::vector<unsigned int> indices;
+#endif
+
+            assert(faces!=nullptr && positions!=nullptr && normals!=nullptr & texCoords!=nullptr);
+            //if(faces!=nullptr && positions!=nullptr && normals!=nullptr & texCoords!=nullptr){
                 //std::cout << mesh->mNumFaces << std::endl;
 
                 //std::cout << "mesh numVertices: " << mesh->mNumVertices << std::endl;
                 for(unsigned int j=0; j<mesh->mNumVertices; j++) {
-
+                    //std::cout << positions[j].x << ", " << positions[j].y << ", " << positions[j].z << std::endl;
                     Vertex cur_vertex = Vertex {
                             glm::vec3((float)positions[j].x , (float)positions[j].y, (float)positions[j].z),
                             glm::vec3((float)normals[j].x, (float)normals[j].y, (float)normals[j].z),
@@ -189,18 +226,32 @@ Model::Model(const char* file)
                 //delete texCoords;
                 //delete normals;
 
+                //std::cout << "mesh->mNumFaces" << mesh->mNumFaces << std::endl;
+
                 for(unsigned int m=0; m< mesh->mNumFaces; m++){
                     for(unsigned int k=0; k < faces->mNumIndices;k++){
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
+
                         GLuint index = faces[m].mIndices[k];
-                        //std::cout << faces[m].mIndices[k] << std::endl;
+                        //std::cout << faces[m].mIndices[k] << " ";
                         indices.push_back((GLuint)index);
+#elif defined(Q_OS_WIN)
+                        unsigned int index = faces[m].mIndices[k];
+                        //std::cout << faces[m].mIndices[k] << " ";
+                        indices.push_back((unsigned int)index);
+#endif
                     }
+                    //std::cout << ":" << m << std::endl;
                 }
 
                 //delete faces;
 
-
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
                 Mesh cur_mesh(vertices, indices, textures);
+#elif defined(Q_OS_WIN)
+                D3D11Mesh cur_d3d11_mesh(shader, vertices, indices, textures);
+#endif
+
 
                 glm::mat4 matNextNode = matrix_mesh;// * glm::mat4(1.0f) * glm::mat4(1.0f) * glm::scale(glm::mat4(1.0f), glm::vec3(1.0,1.0,1.0));
                 //glm::mat4 matNextNode (1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0);
@@ -210,32 +261,68 @@ Model::Model(const char* file)
                 translationsMeshes.push_back(glm::vec3(0.0,0.0,0.0));
                 rotationsMeshes.push_back(glm::quat(1.0,0.0,0.0,0.0));
                 scalesMeshes.push_back(glm::vec3(1.0,1.0,1.0));
+
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
                 meshes.push_back(cur_mesh);
+#elif defined(Q_OS_WIN)
+                d3d11_meshes.push_back(cur_d3d11_mesh);
+#endif
 
 
-
-
-            } //aiMesh* mesh = scene->mMeshes[i];
+            //}
 
 
 
         }
+
     }
+
 
     // Traverse all nodes
     //traverseNode(0);
 
 }
 
+#if defined(Q_OS_WIN)
+void Model::DrawD3D11(D3D11Shader* shader,Camera& camera, glm::mat4 matrices_mesh)
+{
+    // Go over all meshes and draw each one
+    for (unsigned long i = 0; i < d3d11_meshes.size(); i++)
+    {
+        d3d11_meshes[i].D3D11Mesh::Draw(shader, camera, matricesMeshes[i]*matrices_mesh);
 
+    }
+
+    std::vector<Vertex> vertices;
+
+    std::vector<unsigned int> indices;
+    //For some reason it doesn't draw the last mesh, so I do it manually
+    int lastIndex = d3d11_meshes.size()-1;
+    for(unsigned long j=0; j < d3d11_meshes[lastIndex].vertices.size(); j++ ) {
+        glm::vec3 position = d3d11_meshes[lastIndex].vertices[j].position;
+        glm::vec3 normals = d3d11_meshes[lastIndex].vertices[j].normal;
+        glm::vec3 colour = d3d11_meshes[lastIndex].vertices[j].color;
+        glm::vec2 texCoord = d3d11_meshes[lastIndex].vertices[j].texUV;
+        Vertex v = Vertex{position, normals,colour, texCoord};
+        vertices.push_back(v);
+    }
+    for (unsigned long k=0; k < d3d11_meshes[lastIndex].indices.size(); k++) {
+        indices.push_back(d3d11_meshes[lastIndex].indices[k]);
+    }
+    D3D11Mesh last_mesh(shader, vertices,indices, d3d11_meshes[lastIndex].textures);
+    last_mesh.Draw(shader, camera, matricesMeshes[lastIndex]*matrices_mesh);
+
+}
+#endif
 
 void Model::Draw(Shader& shader,Camera& camera, glm::mat4 matrices_mesh)
 {
 
     // Go over all meshes and draw each one
     for (unsigned long i = 0; i < meshes.size(); i++)
-    {
+    {             
         meshes[i].Mesh::Draw(shader, camera, matricesMeshes[i]*matrices_mesh);
+
     }
 #if defined(Q_OS_MACX) || defined(Q_OS_UNIX)
     std::vector<Vertex> vertices;
@@ -259,330 +346,4 @@ void Model::Draw(Shader& shader,Camera& camera, glm::mat4 matrices_mesh)
 #endif
 }
 
-void Model::loadMesh(unsigned int indMesh)
-{
 
-    // Get all accessor indices
-    unsigned int posAccInd = JSON["meshes"][indMesh]["primitives"][0]["attributes"]["POSITION"];
-    unsigned int normalAccInd = JSON["meshes"][indMesh]["primitives"][0]["attributes"]["NORMAL"];
-    unsigned int texAccInd = JSON["meshes"][indMesh]["primitives"][0]["attributes"]["TEXCOORD_0"];
-    unsigned int indAccInd = JSON["meshes"][indMesh]["primitives"][0]["indices"];
-
-    // Use accessor indices to get all vertices components
-    std::vector<float> posVec = getFloats(JSON["accessors"][posAccInd]);
-    std::vector<glm::vec3> positions = groupFloatsVec3(posVec);
-    std::vector<float> normalVec = getFloats(JSON["accessors"][normalAccInd]);
-    std::vector<glm::vec3> normals = groupFloatsVec3(normalVec);
-    std::vector<float> texVec = getFloats(JSON["accessors"][texAccInd]);
-    std::vector<glm::vec2> texUVs = groupFloatsVec2(texVec);
-
-    // Combine all the vertex components and also get the indices and textures
-    std::vector<Vertex> vertices = assembleVertices(positions, normals, texUVs);
-    std::vector<GLuint> indices = getIndices(JSON["accessors"][indAccInd]);
-    std::vector<Texture> textures = getTextures();
-
-    // Combine the vertices, indices, and textures into a mesh
-    meshes.push_back(Mesh(vertices, indices, textures));
-}
-
-void Model::traverseNode(unsigned int nextNode, glm::mat4 matrix)
-{
-
-
-    // Current node
-    json node = JSON["nodes"][nextNode];
-
-
-    // Get translation if it exists
-    glm::vec3 translation = glm::vec3(0.0f, 0.0f, 0.0f);
-    if (node.find("translation") != node.end())
-    {
-        float transValues[3];
-        for (unsigned int i = 0; i < node["translation"].size(); i++)
-            transValues[i] = (node["translation"][i]);
-        translation = glm::make_vec3(transValues);
-    }
-    // Get quaternion if it exists
-    glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
-    if (node.find("rotation") != node.end())
-    {
-        float rotValues[4] =
-        {
-            node["rotation"][3],
-            node["rotation"][0],
-            node["rotation"][1],
-            node["rotation"][2]
-        };
-        rotation = glm::make_quat(rotValues);
-    }
-
-
-    // Get scale if it exists
-    glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
-    if (node.find("scale") != node.end())
-    {
-        float scaleValues[3];
-        for (unsigned int i = 0; i < node["scale"].size(); i++)
-            scaleValues[i] = (node["scale"][i]);
-        scale = glm::make_vec3(scaleValues);
-    }
-
-    // Get matrix if it exists
-    glm::mat4 matNode = glm::mat4(1.0f);
-    if (node.find("matrix") != node.end())
-    {
-        float matValues[16];
-        for (unsigned int i = 0; i < node["matrix"].size(); i++)
-            matValues[i] = (node["matrix"][i]);
-        matNode = glm::make_mat4(matValues);
-    }
-
-    // Initialize matrices
-    glm::mat4 trans = glm::mat4(1.0f);
-    glm::mat4 rot = glm::mat4(1.0f);
-    glm::mat4 sca = glm::mat4(1.0f);
-
-    // Use translation, rotation, and scale to change the initialized matrices
-    trans = glm::translate(trans, translation);
-    rot = glm::mat4_cast(rotation);
-    sca = glm::scale(sca, scale);
-
-    // Multiply all matrices together
-    glm::mat4 matNextNode = matrix * matNode * trans * rot * sca;
-
-    // Check if the node contains a mesh and if it does load it
-    if (node.find("mesh") != node.end())
-    {
-        translationsMeshes.push_back(translation);
-        rotationsMeshes.push_back(rotation);
-        scalesMeshes.push_back(scale);
-        matricesMeshes.push_back(matNextNode);
-
-        loadMesh(node["mesh"]);
-
-    }
-
-    // Check if the node has children, and if it does, apply this function to them with the matNextNode
-    if (node.find("children") != node.end())
-    {
-        for (unsigned int i = 0; i < node["children"].size(); i++)
-            traverseNode(node["children"][i], matNextNode);
-    }
-}
-
-std::vector<unsigned char> Model::getData()
-{
-    // Create a place to store the raw text, and get the uri of the .bin file
-    std::string bytesText;
-    std::string uri = JSON["buffers"][0]["uri"];
-
-    // Store raw text data into bytesText
-    std::string fileStr = std::string(file);
-    std::string fileDirectory = fileStr.substr(0, fileStr.find_last_of('/') + 1);
-
-    bytesText = get_file_contents((fileDirectory + uri).c_str());
-
-    // Transform the raw text data into bytes and put them in a vector
-    std::vector<unsigned char> data(bytesText.begin(), bytesText.end());
-    return data;
-}
-
-std::vector<float> Model::getFloats(json accessor)
-{
-    std::vector<float> floatVec;
-
-
-    // Get properties from the accessor
-    unsigned int buffViewInd = accessor.value("bufferView", 1);
-    unsigned int count = accessor["count"];
-    unsigned int accByteOffset = accessor.value("byteOffset", 0);
-    std::string type = accessor["type"];
-
-    // Get properties from the bufferView
-    json bufferView = JSON["bufferViews"][buffViewInd];
-    unsigned int byteOffset = bufferView["byteOffset"];
-
-    // Interpret the type and store it into numPerVert
-    unsigned int numPerVert;
-    if (type == "SCALAR") numPerVert = 1;
-    else if (type == "VEC2") numPerVert = 2;
-    else if (type == "VEC3") numPerVert = 3;
-    else if (type == "VEC4") numPerVert = 4;
-    //else if (type == "MAT2") numPerVert = 4;
-    //else if (type == "MAT3") numPerVert = 9;
-    //else if (type == "MAT4") numPerVert = 16;
-    else throw std::invalid_argument("Type is invalid (not SCALAR, VEC2, VEC3, or VEC4)");
-
-    // Go over all the bytes in the data at the correct place using the properties from above
-    unsigned int beginningOfData = byteOffset + accByteOffset;
-    unsigned int lengthOfData = count * 4 * numPerVert;
-    for (unsigned int i = beginningOfData; i < beginningOfData + lengthOfData; i)
-    {
-
-        unsigned char bytes[] = { data[i++], data[i++], data[i++], data[i++] };
-
-
-        float value;
-        std::memcpy(&value, bytes, sizeof(float));
-
-
-        floatVec.push_back(value);
-    }
-
-
-    return floatVec;
-}
-
-std::vector<GLuint> Model::getIndices(json accessor)
-{
-    std::vector<GLuint> indices;
-
-    // Get properties from the accessor
-    unsigned int buffViewInd = accessor.value("bufferView", 0);
-    unsigned int count = accessor["count"];
-    unsigned int accByteOffset = accessor.value("byteOffset", 0);
-    unsigned int componentType = accessor["componentType"];
-
-    // Get properties from the bufferView
-    json bufferView = JSON["bufferViews"][buffViewInd];
-    unsigned int byteOffset = bufferView["byteOffset"];
-
-    // Get indices with regards to their type: unsigned int, unsigned short, or short
-    unsigned int beginningOfData = byteOffset + accByteOffset;
-    if (componentType == 5125)
-    {
-        for (unsigned int i = beginningOfData; i < byteOffset + accByteOffset + count * 4; i)
-        {
-            unsigned char bytes[] = { data[i++], data[i++], data[i++], data[i++] };
-            unsigned int value;
-            std::memcpy(&value, bytes, sizeof(unsigned int));
-            indices.push_back((GLuint)value);
-        }
-    }
-    else if (componentType == 5123)
-    {
-        for (unsigned int i = beginningOfData; i < byteOffset + accByteOffset + count * 2; i)
-        {
-            unsigned char bytes[] = { data[i++], data[i++] };
-            unsigned short value;
-            std::memcpy(&value, bytes, sizeof(unsigned short));
-            indices.push_back((GLuint)value);
-        }
-    }
-    else if (componentType == 5122)
-    {
-        for (unsigned int i = beginningOfData; i < byteOffset + accByteOffset + count * 2; i)
-        {
-            unsigned char bytes[] = { data[i++], data[i++] };
-            short value;
-            std::memcpy(&value, bytes, sizeof(short));
-            indices.push_back((GLuint)value);
-        }
-    }
-
-    return indices;
-}
-
-std::vector<Texture> Model::getTextures()
-{
-    std::vector<Texture> textures;
-
-    std::string fileStr = std::string(file);
-    std::string fileDirectory = fileStr.substr(0, fileStr.find_last_of('/') + 1);
-
-    // Go over all images
-    for (unsigned int i = 0; i < JSON["images"].size(); i++)
-    {
-        // uri of current texture
-        std::string texPath = JSON["images"][i]["uri"];
-
-        // Check if the texture has already been loaded
-        bool skip = false;
-        for (unsigned int j = 0; j < loadedTexName.size(); j++)
-        {
-            if (loadedTexName[j] == texPath)
-            {
-                textures.push_back(loadedTex[j]);
-                skip = true;
-                break;
-            }
-        }
-
-        // If the texture has been loaded, skip this
-        if (!skip)
-        {
-            // Load diffuse texture
-            if (texPath.find("baseColor") != std::string::npos)
-            {
-                Texture diffuse = Texture((fileDirectory + texPath).c_str(), "diffuse", loadedTex.size());
-                textures.push_back(diffuse);
-                loadedTex.push_back(diffuse);
-                loadedTexName.push_back(texPath);
-            }
-            // Load specular texture
-            else if (texPath.find("metallicRoughness") != std::string::npos)
-            {
-                Texture specular = Texture((fileDirectory + texPath).c_str(), "specular", loadedTex.size());
-                textures.push_back(specular);
-                loadedTex.push_back(specular);
-                loadedTexName.push_back(texPath);
-            }
-        }
-    }
-
-    return textures;
-}
-
-std::vector<Vertex> Model::assembleVertices
-(
-    std::vector<glm::vec3> positions,
-    std::vector<glm::vec3> normals,
-    std::vector<glm::vec2> texUVs
-)
-{
-    std::vector<Vertex> vertices;
-    for (int i = 0; i < positions.size(); i++)
-    {
-        //std::cout << positions[i].y << std::endl;
-        vertices.push_back
-        (
-            Vertex
-            {
-                    positions[i],
-                    normals[i],
-                    glm::vec3(1.0f, 1.0f, 1.0f),
-                    texUVs[i]
-
-            }
-        );
-    }
-    return vertices;
-}
-
-std::vector<glm::vec2> Model::groupFloatsVec2(std::vector<float> floatVec)
-{
-    std::vector<glm::vec2> vectors;
-    for (int i = 0; i < floatVec.size(); i)
-    {
-        vectors.push_back(glm::vec2(floatVec[i++], floatVec[i++]));
-    }
-    return vectors;
-}
-std::vector<glm::vec3> Model::groupFloatsVec3(std::vector<float> floatVec)
-{
-    std::vector<glm::vec3> vectors;
-    for (int i = 0; i < floatVec.size(); i)
-    {
-        vectors.push_back(glm::vec3(floatVec[i++], floatVec[i++], floatVec[i++]));
-    }
-    return vectors;
-}
-std::vector<glm::vec4> Model::groupFloatsVec4(std::vector<float> floatVec)
-{
-    std::vector<glm::vec4> vectors;
-    for (int i = 0; i < floatVec.size(); i)
-    {
-        vectors.push_back(glm::vec4(floatVec[i++], floatVec[i++], floatVec[i++], floatVec[i++]));
-    }
-    return vectors;
-}

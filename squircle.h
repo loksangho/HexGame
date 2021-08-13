@@ -54,7 +54,12 @@
 #include "qglobal.h"
 
 #ifdef Q_OS_WIN
-    #include<QOpenGLFunctions>
+    #include<QtGui/QOpenGLFunctions>
+    #include <d3d11.h>
+    #include <d3dcompiler.h>
+    #include "d3d11shaderclass.h"
+    #include "d3d11texture.h"
+    #include "d3d11mesh.h"
 #elif defined(Q_OS_MACX) || defined(Q_OS_LINUX)
     #include<QtGui/QOpenGLFunctions>
 #endif
@@ -102,7 +107,10 @@ public:
 };
 
 //! [1]
-class SquircleRenderer : public QObject, protected QOpenGLFunctions
+class SquircleRenderer : public QObject
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
+        , protected QOpenGLFunctions
+#endif
 {
     Q_OBJECT
 
@@ -163,10 +171,42 @@ public:
     bool winner_declared = false;
     bool can_throw = true;
 
+#ifdef Q_OS_WIN
+    struct TargaHeader
+        {
+            unsigned char data1[12];
+            unsigned short width;
+            unsigned short height;
+            unsigned char bpp;
+            unsigned char data2;
+        };
+    ID3D11Device *m_device = nullptr;
+    ID3D11DeviceContext *m_context = nullptr;
+
+    D3D11Shader* d3d11ShaderProgram = nullptr;
+    bool m_initialized = false;
+
+    //ID3D11Buffer *m_cbuf = nullptr; //constant
+    //ID3D11Buffer *m_sbuf = nullptr; //sampler
+   // ID3D11Buffer *m_texbuf = nullptr; //texcoords
+
+
+   // ID3D11RasterizerState *m_rastState = nullptr;
+    //ID3D11DepthStencilState *m_dsState = nullptr;
+
+
+#endif
+
 public slots:
     void init();
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     void paint();
+#endif
     void resetsBallThrow();
+#ifdef Q_OS_WIN
+    void frameStart();
+    void mainPassRecordingStart();
+#endif
 
 //protected:
     //bool eventFilter(QObject *obj, QEvent *event);
@@ -179,6 +219,10 @@ private:
     QTime* time;
     int prev_time = 0;
     unsigned int counter = 0;
+
+#ifdef Q_OS_WIN
+    void D3D11Init();
+#endif
 
 };
 //! [1]
@@ -211,6 +255,7 @@ public:
     void set_enable_buttons(bool b);
     bool hex_buttons_enabled = false;
     bool inPlayWindow = false;
+
 
 signals:
     void tChanged();

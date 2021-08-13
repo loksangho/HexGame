@@ -4,6 +4,14 @@
         <file>default.vert</file>
         <file>light.frag</file>
         <file>light.vert</file>
+        <file>default140.frag</file>
+        <file>default140.vert</file>
+        <file>simple.frag</file>
+        <file>simple.vert</file>
+        <file>D3D11_squircle.frag</file>
+        <file>D3D11_squircle.vert</file>
+        <file>default_D3D11.vert</file>
+        <file>default_D3D11.frag</file>
     </qresource>
     <qresource prefix="/models">
         <file>cube_robot/scene.bin</file>
@@ -27,5 +35,7 @@
         <file>table/table.dae</file>
         <file>hexagon3D/blue_blocks.dae</file>
         <file>hexagon3D/red_blocks.dae</file>
+        <file>stone01.tga</file>
+        <file>stone-wall.jpg</file>
     </qresource>
 </RCC>

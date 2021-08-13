@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/scenegraph/openglunderqml">
+        <file>main.qml</file>
+    </qresource>
+    <qresource prefix="/scenegraph/d3d11underqml">
+        <file>default_D3D11.frag</file>
+        <file>default_D3D11.vert</file>
+    </qresource>
+</RCC>

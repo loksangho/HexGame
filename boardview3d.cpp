@@ -4,6 +4,8 @@
 #include "keyreceiver.h"
 #include "squircle.h"
 #include "customdialog.h"
+#include <QtQuick/QQuickView>
+
 
 BoardView3D::BoardView3D(QMainWindow* main_window, QWidget *parent) :
     QWidget(parent),
@@ -11,7 +13,10 @@ BoardView3D::BoardView3D(QMainWindow* main_window, QWidget *parent) :
     main_window(main_window)
 {
     ui->setupUi(this);
+
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     ui->quickWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
+#endif
 
     int colour = 0;
     bool colour_checked = true;
@@ -36,13 +41,30 @@ BoardView3D::BoardView3D(QMainWindow* main_window, QWidget *parent) :
             //qmlRegisterSingletonType<Squircle>("OpenGLUnderQML", 1, 0, "Squircle",Squircle::squircleInstance);
             //Squircle testObj;
             qmlRegisterType<Squircle>("OpenGLUnderQML", 1, 0, "Squircle");
-            ui->quickWidget->engine()->rootContext()->setContextProperty("test", &testObj);
-            ui->quickWidget->setSource(QUrl("qrc:///scenegraph/openglunderqml/main.qml"));
-            //ui->fpsLabel->setText(QString::fromStdString( testObj.fps_title));
-            Squircle* squircle = ui->quickWidget->rootObject()->findChild<Squircle *>("squircle");
-            squircle->init(11, colour==0?Colour::BLUE:Colour::RED, difficulty);
-            //qmlRegisterSingletonType<ShortcutListener>("App", 1, 0, "ShortcutListener", shortcutListenerInstance);
 
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
+            //ui->quickWidget->engine()->rootContext()->setContextProperty("test", &testObj);
+            //ui->quickWidget->setSource(QUrl("qrc:///scenegraph/openglunderqml/main.qml"));
+            //Squircle* squircle = ui->quickWidget->rootObject()->findChild<Squircle *>("squircle");
+            //squircle->init(11, colour==0?Colour::BLUE:Colour::RED, difficulty);
+
+
+            QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGLRhi);
+
+#elif defined(Q_OS_WIN)
+            //qmlRegisterType<Squircle>("OpenGLUnderQML", 1, 0, "Squircle");
+            QQuickWindow::setGraphicsApi(QSGRendererInterface::Direct3D11Rhi);
+
+#endif
+            QQuickView* view = new QQuickView();
+            QWidget* container = QWidget::createWindowContainer(view, this);
+            container->setFocusPolicy(Qt::TabFocus);
+
+            view->setResizeMode(QQuickView::SizeRootObjectToView);
+            view->setSource(QUrl("qrc:///scenegraph/openglunderqml/main.qml"));
+            Squircle* squircle = view->rootObject()->findChild<Squircle *>("squircle");
+            squircle->init(11, colour==0?Colour::BLUE:Colour::RED, difficulty);
+            ui->verticalLayout->addWidget(container);
             //QQmlApplicationEngine engine;
             //engine.load(QUrl(QStringLiteral("qrc:///scenegraph/openglunderqml/main.qml")));;
         }

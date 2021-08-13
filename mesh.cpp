@@ -11,14 +11,22 @@ Mesh::Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::v
     VBO VBO(vertices);
     // Generates Element Buffer Object and links it to indices
     EBO EBO(indices);
+    //EBO.Bind();
     // Links VBO attributes such as coordinates and colors to VAO
-    VAO1.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
-    VAO1.LinkAttrib(VBO, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
-    VAO1.LinkAttrib(VBO, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)(9 * sizeof(float)));
-    VAO1.LinkAttrib(VBO, 3, 3, GL_FLOAT, sizeof(Vertex), (void*)(6 * sizeof(float)));
+    VAO1.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
+    VAO1.LinkAttrib(VBO, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
+    VAO1.LinkAttrib(VBO, 2, 3, GL_FLOAT, sizeof(Vertex), (void*)(6 * sizeof(float)));
+    VAO1.LinkAttrib(VBO, 3, 2, GL_FLOAT, sizeof(Vertex), (void*)(9 * sizeof(float)));
 
-
+    //for(Vertex v : vertices){
+    //    std::cout << v.position.x << ", " << v.position.y << ", " << v.position.z << std::endl;
+    //}
     //VAO.LinkAttrib(VBO, 2, 3, GL_FLOAT, sizeof(Vertex), (void*)(8 * sizeof(float)));
+
+    //for(GLuint i : indices) {
+    //    std::cout << i << std::endl;
+    //}
+
     // Unbind all to prevent accidentally modifying them
     VAO1.Unbind();
     VBO.Unbind();
@@ -70,11 +78,11 @@ void Mesh::Draw
     }
     // Take care of the camera Matrix
 #ifdef Q_OS_WIN
-    PFNGLUNIFORM3FPROC glUniform3f;
-    glUniform3f = (PFNGLUNIFORM3FPROC) wglGetProcAddress("glUniform3f");
+    //PFNGLUNIFORM3FARBPROC glUniform3fARB;
+    //glUniform3fARB = (PFNGLUNIFORM3FARBPROC) wglGetProcAddress("glUniform3fARB");
 
-    PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
-    glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC) wglGetProcAddress("glGetUniformLocation");
+    //PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
+    //glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC) wglGetProcAddress("glGetUniformLocation");
 
     glUniform3f(glGetUniformLocation(shader.ID, "camPos"), camera.Position.x, camera.Position.y, camera.Position.z);
 #elif defined(Q_OS_MACX)
@@ -82,8 +90,6 @@ void Mesh::Draw
 #elif defined(Q_OS_LINUX)
     glUniform3f(glGetUniformLocation(shader.ID, "camPos"), camera.Position.x, camera.Position.y, camera.Position.z);
 #endif
-
-
 
 
 
@@ -101,8 +107,8 @@ void Mesh::Draw
 
 
 #ifdef Q_OS_WIN
-    PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv;
-    glUniformMatrix4fv = (PFNGLUNIFORMMATRIX4FVPROC) wglGetProcAddress("glUniformMatrix4fv");
+    //PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv;
+    //glUniformMatrix4fv = (PFNGLUNIFORMMATRIX4FVPROC) wglGetProcAddress("glUniformMatrix4fv");
 
     //PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
     //glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC) wglGetProcAddress("glGetUniformLocation");
@@ -124,7 +130,7 @@ void Mesh::Draw
     //std::cout << vertices.size() << std::endl;
     // Draw the actual mesh
     //std::cout << "here2" << std::endl;
-
+    //HandleGLError();
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 
 }

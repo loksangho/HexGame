@@ -10,8 +10,8 @@ VAO::VAO(){
     glGenVertexArraysAPPLE(1, &ID);
 #elif defined(Q_OS_WIN)
 
-    PFNGLGENVERTEXARRAYSPROC glGenVertexArrays;
-    glGenVertexArrays = (PFNGLGENVERTEXARRAYSPROC) wglGetProcAddress("glGenVertexArrays");
+    //PFNGLGENVERTEXARRAYSPROC glGenVertexArrays;
+    //glGenVertexArrays = (PFNGLGENVERTEXARRAYSPROC) wglGetProcAddress("glGenVertexArrays");
 
 
     glGenVertexArrays(1, &ID);
@@ -29,11 +29,11 @@ void VAO::LinkAttrib(VBO& VBO, GLuint layout, GLuint numComponents, GLenum type,
         glEnableVertexAttribArrayARB(layout);
     #elif defined(Q_OS_WIN)
 
-    PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer;
-    glVertexAttribPointer = (PFNGLVERTEXATTRIBPOINTERPROC) wglGetProcAddress("glVertexAttribPointer");
+    //PFNGLVERTEXATTRIBPOINTERARBPROC glVertexAttribPointerARB;
+    //glVertexAttribPointerARB = (PFNGLVERTEXATTRIBPOINTERARBPROC) wglGetProcAddress("glVertexAttribPointerARB");
 
-    PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray;
-    glEnableVertexAttribArray = (PFNGLENABLEVERTEXATTRIBARRAYPROC) wglGetProcAddress("glEnableVertexAttribArray");
+    //PFNGLENABLEVERTEXATTRIBARRAYARBPROC glEnableVertexAttribArrayARB;
+    //glEnableVertexAttribArrayARB = (PFNGLENABLEVERTEXATTRIBARRAYARBPROC) wglGetProcAddress("glEnableVertexAttribArrayARB");
 
 
     glVertexAttribPointer(layout,numComponents,type, GL_FALSE, stride, offset);
@@ -53,8 +53,8 @@ void VAO::Bind() {
 #ifdef Q_OS_MACX
     glBindVertexArrayAPPLE(ID);
 #elif defined(Q_OS_WIN)
-PFNGLBINDVERTEXARRAYPROC glBindVertexArray;
-glBindVertexArray = (PFNGLBINDVERTEXARRAYPROC) wglGetProcAddress("glBindVertexArray");
+//PFNGLBINDVERTEXARRAYPROC glBindVertexArray;
+//glBindVertexArray = (PFNGLBINDVERTEXARRAYPROC) wglGetProcAddress("glBindVertexArray");
 
     glBindVertexArray(ID);
 #elif defined(Q_OS_LINUX)
@@ -65,8 +65,8 @@ void VAO::Unbind(){
 #ifdef Q_OS_MACX
     glBindVertexArrayAPPLE(0);
 #elif defined(Q_OS_WIN)
-PFNGLBINDVERTEXARRAYPROC glBindVertexArray;
-glBindVertexArray = (PFNGLBINDVERTEXARRAYPROC) wglGetProcAddress("glBindVertexArray");
+//PFNGLBINDVERTEXARRAYPROC glBindVertexArray;
+//glBindVertexArray = (PFNGLBINDVERTEXARRAYPROC) wglGetProcAddress("glBindVertexArray");
 
     glBindVertexArray(0);
 #elif defined(Q_OS_LINUX)
@@ -79,8 +79,8 @@ void VAO::Delete() {
 #ifdef Q_OS_MACX
     glDeleteVertexArrays(1, &ID);
 #elif defined(Q_OS_WIN)
-PFNGLDELETEVERTEXARRAYSPROC glDeleteVertexArrays;
-glDeleteVertexArrays = (PFNGLDELETEVERTEXARRAYSPROC) wglGetProcAddress("glDeleteVertexArrays");
+//PFNGLDELETEVERTEXARRAYSPROC glDeleteVertexArrays;
+//glDeleteVertexArrays = (PFNGLDELETEVERTEXARRAYSPROC) wglGetProcAddress("glDeleteVertexArrays");
 
     glDeleteVertexArrays(1, &ID);
 #elif defined(Q_OS_LINUX)

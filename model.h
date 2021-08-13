@@ -3,6 +3,7 @@
 
 #include<json/json.hpp>
 #include"mesh.h"
+#include "d3d11mesh.h"
 
 using json = nlohmann::json;
 
@@ -11,7 +12,16 @@ class Model
 {
 public:
     // Loads in a model from a file and stores tha information in 'data', 'JSON', and 'file'
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     Model(const char* file);
+#endif
+
+#ifdef Q_OS_WIN
+    Model(D3D11Shader* shader, const char* file);
+
+    void DrawD3D11(D3D11Shader* shader,Camera& camera, glm::mat4 matrices_mesh=glm::mat4(1.0f));
+    std::vector<D3D11Mesh> d3d11_meshes;
+#endif
 
     void Draw(Shader& shader,
               Camera& camera, glm::mat4 matrices_mesh=glm::mat4(1.0f));
@@ -33,8 +43,14 @@ private:
 
     // Prevents textures from being loaded twice
     std::vector<std::string> loadedTexName;
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     std::vector<Texture> loadedTex;
+#elif defined(Q_OS_WIN)
+    std::vector<D3D11Texture> loadedTex;
+#endif
 
+
+    /*
     // Loads a single mesh by its index
     void loadMesh(unsigned int indMesh);
 
@@ -60,5 +76,6 @@ private:
     std::vector<glm::vec2> groupFloatsVec2(std::vector<float> floatVec);
     std::vector<glm::vec3> groupFloatsVec3(std::vector<float> floatVec);
     std::vector<glm::vec4> groupFloatsVec4(std::vector<float> floatVec);
+    */
 };
 #endif

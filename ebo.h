@@ -1,13 +1,14 @@
 #ifndef EBO_H
 #define EBO_H
-
+#include "qglobal.h"
+#define GL_GLEXT_PROTOTYPES
 #ifdef Q_OS_WIN
-    #include<QtGui/QOpenGLFunctions>
+    #include <QOpenGLFunctions>
 #elif defined(Q_OS_MACX) || defined(Q_OS_LINUX)
-    #include<QtGui/QOpenGLFunctions>
+    #include <QtGui/QOpenGLFunctions>
 #endif
 
-#define GL_GLEXT_PROTOTYPES
+
 #include <QOpenGLShaderProgram>
 
 class EBO

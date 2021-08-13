@@ -1,8 +1,9 @@
 #version 120
-attribute vec3 aNormal;
 attribute vec3 aPos;
-attribute vec2 aTex;
+attribute vec3 aNormal;
 attribute vec3 aColor;
+attribute vec2 aTex;
+
 
 
 
@@ -35,8 +36,8 @@ void main()
         // Assigns the colors from the Vertex Data to "color"
         color = aColor;
         // Assigns the texture coordinates from the Vertex Data to "texCoord"
-
+        texCoord =  aTex;
         // Outputs the positions/coordinates of all vertices
         gl_Position = camMatrix * vec4(crntPos, 1.0f);
-        texCoord =  aTex;
+
 }

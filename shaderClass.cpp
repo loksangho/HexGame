@@ -39,26 +39,26 @@ Shader::Shader(const char* vertexFile, const char* fragmentFile)
     // Create Vertex Shader Object and get its reference
 
 #ifdef Q_OS_WIN
-    PFNGLCREATESHADERPROC glCreateShader;
-    glCreateShader = (PFNGLCREATESHADERPROC) wglGetProcAddress("glCreateShader");
+    //PFNGLCREATESHADERPROC glCreateShader;
+    //glCreateShader = (PFNGLCREATESHADERPROC) wglGetProcAddress("glCreateShader");
 
-    PFNGLSHADERSOURCEPROC glShaderSource;
-    glShaderSource = (PFNGLSHADERSOURCEPROC) wglGetProcAddress("glShaderSource");
+    //PFNGLSHADERSOURCEPROC glShaderSource;
+    //glShaderSource = (PFNGLSHADERSOURCEPROC) wglGetProcAddress("glShaderSource");
 
-    PFNGLCOMPILESHADERPROC glCompileShader;
-    glCompileShader = (PFNGLCOMPILESHADERPROC) wglGetProcAddress("glCompileShader");
+    //PFNGLCOMPILESHADERPROC glCompileShader;
+    //glCompileShader = (PFNGLCOMPILESHADERPROC) wglGetProcAddress("glCompileShader");
 
-    PFNGLCREATEPROGRAMPROC glCreateProgram;
-    glCreateProgram = (PFNGLCREATEPROGRAMPROC) wglGetProcAddress("glCreateProgram");
+    //PFNGLCREATEPROGRAMPROC glCreateProgram;
+    //glCreateProgram = (PFNGLCREATEPROGRAMPROC) wglGetProcAddress("glCreateProgram");
 
-    PFNGLATTACHSHADERPROC glAttachShader;
-    glAttachShader = (PFNGLATTACHSHADERPROC) wglGetProcAddress("glAttachShader");
+    //PFNGLATTACHSHADERPROC glAttachShader;
+    //glAttachShader = (PFNGLATTACHSHADERPROC) wglGetProcAddress("glAttachShader");
 
-    PFNGLLINKPROGRAMPROC glLinkProgram;
-    glLinkProgram = (PFNGLLINKPROGRAMPROC) wglGetProcAddress("glLinkProgram");
+    //PFNGLLINKPROGRAMPROC glLinkProgram;
+    //glLinkProgram = (PFNGLLINKPROGRAMPROC) wglGetProcAddress("glLinkProgram");
 
-    PFNGLDELETESHADERPROC glDeleteShader;
-    glDeleteShader = (PFNGLDELETESHADERPROC) wglGetProcAddress("glDeleteShader");
+    //PFNGLDELETESHADERPROC glDeleteShader;
+    //glDeleteShader = (PFNGLDELETESHADERPROC) wglGetProcAddress("glDeleteShader");
 
 #endif
 
@@ -99,8 +99,8 @@ Shader::Shader(const char* vertexFile, const char* fragmentFile)
 void Shader::Activate()
 {
 #ifdef Q_OS_WIN
-    PFNGLUSEPROGRAMPROC glUseProgram;
-    glUseProgram = (PFNGLUSEPROGRAMPROC) wglGetProcAddress("glUseProgram");
+    //PFNGLUSEPROGRAMPROC glUseProgram;
+    //glUseProgram = (PFNGLUSEPROGRAMPROC) wglGetProcAddress("glUseProgram");
 #endif
     glUseProgram(ID);
 }
@@ -109,8 +109,8 @@ void Shader::Activate()
 void Shader::Delete()
 {
 #ifdef Q_OS_WIN
-    PFNGLDELETEPROGRAMPROC glDeleteProgram;
-    glDeleteProgram = (PFNGLDELETEPROGRAMPROC) wglGetProcAddress("glDeleteProgram");
+    //PFNGLDELETEPROGRAMPROC glDeleteProgram;
+    //glDeleteProgram = (PFNGLDELETEPROGRAMPROC) wglGetProcAddress("glDeleteProgram");
 #endif
     glDeleteProgram(ID);
 }
@@ -120,17 +120,17 @@ void Shader::compileErrors(unsigned int shader, const char* type)
 {
 
 #ifdef Q_OS_WIN
-    PFNGLGETSHADERIVPROC glGetShaderiv;
-    glGetShaderiv = (PFNGLGETSHADERIVPROC) wglGetProcAddress("glGetShaderiv");
+    //PFNGLGETSHADERIVPROC glGetShaderiv;
+    //glGetShaderiv = (PFNGLGETSHADERIVPROC) wglGetProcAddress("glGetShaderiv");
 
-    PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog;
-    glGetShaderInfoLog = (PFNGLGETSHADERINFOLOGPROC) wglGetProcAddress("glGetShaderInfoLog");
+    //PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog;
+    //glGetShaderInfoLog = (PFNGLGETSHADERINFOLOGPROC) wglGetProcAddress("glGetShaderInfoLog");
 
-    PFNGLGETPROGRAMIVPROC glGetProgramiv;
-    glGetProgramiv = (PFNGLGETPROGRAMIVPROC) wglGetProcAddress("glGetProgramiv");
+    //PFNGLGETPROGRAMIVPROC glGetProgramiv;
+    //glGetProgramiv = (PFNGLGETPROGRAMIVPROC) wglGetProcAddress("glGetProgramiv");
 
-    PFNGLGETPROGRAMINFOLOGPROC glGetProgramInfoLog;
-    glGetProgramInfoLog = (PFNGLGETPROGRAMINFOLOGPROC) wglGetProcAddress("glGetProgramInfoLog");
+    //PFNGLGETPROGRAMINFOLOGPROC glGetProgramInfoLog;
+    //glGetProgramInfoLog = (PFNGLGETPROGRAMINFOLOGPROC) wglGetProcAddress("glGetProgramInfoLog");
 #endif
     // Stores status of compilation
     GLint hasCompiled;

@@ -1,9 +1,9 @@
 #ifndef TEXTURE_CLASS_H
 #define TEXTURE_CLASS_H
 
+#include "qglobal.h"
 
-
-
+#define GL_GLEXT_PROTOTYPES
 #ifdef Q_OS_WIN
     #include<QtGui/QOpenGLFunctions>
 #elif defined(Q_OS_MACX) || defined(Q_OS_LINUX)

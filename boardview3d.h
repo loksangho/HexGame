@@ -25,7 +25,7 @@ private slots:
 
 private:
     Ui::BoardView3D *ui;
-    Squircle testObj;
+    Squircle* testObj;
 };
 
 #endif // BOARDVIEW3D_H

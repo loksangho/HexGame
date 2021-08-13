@@ -1,4 +1,5 @@
 #include "ebo.h"
+#include <iostream>
 
 // Constructor that generates a Elements Buffer Object and links it to indices
 EBO::EBO(std::vector<GLuint>& indices)
@@ -11,14 +12,14 @@ EBO::EBO(std::vector<GLuint>& indices)
 #elif defined(Q_OS_WIN)
 
 
-PFNGLGENBUFFERSPROC glGenBuffers;
-glGenBuffers = (PFNGLGENBUFFERSPROC) wglGetProcAddress("glGenBuffers");
+//PFNGLGENBUFFERSARBPROC glGenBuffersARB;
+//glGenBuffersARB = (PFNGLGENBUFFERSARBPROC) wglGetProcAddress("glGenBuffersARB");
 
-PFNGLBINDBUFFERPROC glBindBuffer;
-glBindBuffer = (PFNGLBINDBUFFERPROC) wglGetProcAddress("glBindBuffer");
+//PFNGLBINDBUFFERARBPROC glBindBufferARB;
+//glBindBufferARB = (PFNGLBINDBUFFERARBPROC) wglGetProcAddress("glBindBufferARB");
 
-PFNGLBUFFERDATAPROC glBufferData;
-glBufferData = (PFNGLBUFFERDATAPROC) wglGetProcAddress("glBufferData");
+//PFNGLBUFFERDATAARBPROC glBufferDataARB;
+//glBufferDataARB = (PFNGLBUFFERDATAARBPROC) wglGetProcAddress("glBufferDataARB");
 
 glGenBuffers(1, &ID);
 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
@@ -36,9 +37,8 @@ void EBO::Bind() {
     glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER, ID);
 
 #elif defined(Q_OS_WIN)
-    PFNGLBINDBUFFERPROC glBindBuffer;
-    glBindBuffer = (PFNGLBINDBUFFERPROC) wglGetProcAddress("glBindBuffer");
-
+    //PFNGLBINDBUFFERARBPROC glBindBufferARB;
+    //glBindBufferARB = (PFNGLBINDBUFFERARBPROC) wglGetProcAddress("glBindBufferARB");
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
 #elif defined(Q_OS_LINUX)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
@@ -49,8 +49,8 @@ void EBO::Unbind() {
 #ifdef Q_OS_MACX
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 #elif defined(Q_OS_WIN)
-    PFNGLBINDBUFFERPROC glBindBuffer;
-    glBindBuffer = (PFNGLBINDBUFFERPROC) wglGetProcAddress("glBindBuffer");
+    //PFNGLBINDBUFFERARBPROC glBindBufferARB;
+    //glBindBufferARB = (PFNGLBINDBUFFERARBPROC) wglGetProcAddress("glBindBufferARB");
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 #elif defined(Q_OS_LINUX)
@@ -62,8 +62,9 @@ void EBO::Delete() {
 #ifdef Q_OS_MACX
     glDeleteBuffersARB(1, &ID);
 #elif defined(Q_OS_WIN)
-    PFNGLDELETEBUFFERSPROC glDeleteBuffers;
-    glDeleteBuffers = (PFNGLDELETEBUFFERSPROC) wglGetProcAddress("glDeleteBuffers");
+    //PFNGLDELETEBUFFERSARBPROC glDeleteBuffersARB;
+    //glDeleteBuffersARB = (PFNGLDELETEBUFFERSARBPROC) wglGetProcAddress("glDeleteBuffersARB");
+
     glDeleteBuffers(1, &ID);
 
 #elif defined(Q_OS_LINUX)

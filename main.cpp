@@ -5,16 +5,15 @@
 #include <iostream>
 #include <QQuickWindow>
 #include <QFontDatabase>
+#include <QOpenGLFunctions>
+#include <QLoggingCategory>
+#include <QQuickView>
+#include <QSGRendererInterface>
 
 int main(int argc, char *argv[])
 {
-    QSurfaceFormat glFormat;
-    glFormat.setVersion(1, 0);
-    glFormat.setProfile(QSurfaceFormat::CoreProfile);
-    QSurfaceFormat::setDefaultFormat(glFormat);
 
-
-
+    //QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
 
     QApplication a(argc, argv);
     MainWindow w;
@@ -22,11 +21,27 @@ int main(int argc, char *argv[])
     QFontDatabase::addApplicationFont(":/fonts/Copperplate.ttf");
     QFontDatabase::addApplicationFont(":/fonts/CopperplateBold.ttf");
 
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGLRhi);
+    QSurfaceFormat glFormat;
+    glFormat.setVersion(2,1);
+    glFormat.setProfile(QSurfaceFormat::CompatibilityProfile);
+    QSurfaceFormat::setDefaultFormat(glFormat);
+
+#elif defined(Q_OS_WIN)
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::Direct3D11Rhi);
+#endif
+
+    //QQuickView *view = new QQuickView;
+    //view->setSource(QUrl::fromLocalFile(":/scenegraph/openglunderqml/main.qml"));
+    //view->show();
+
 
     QFile File(":/qss/stylesheet.qss");
     File.open(QFile::ReadOnly);
     QString StyleSheet = QString(File.readAll());
+
+
 
     a.setStyleSheet(StyleSheet);
     w.show();

@@ -7,6 +7,10 @@
 
 #ifdef Q_OS_WIN
     #include<QtGui/QOpenGLFunctions>
+    #include <d3d11.h>
+    #include <d3dcompiler.h>
+    #include "d3d11shaderclass.h"
+    #include "Vertex.h"
 #elif defined(Q_OS_MACX) || defined(Q_OS_LINUX)
     #include<QtGui/QOpenGLFunctions>
 #endif
@@ -51,6 +55,13 @@ public:
     void updateMatrix(float FOVdeg, float nearPlane, float farPlane);
     // Exports the camera matrix to a shader
     void Matrix(Shader& shader, const char* uniform);
+#ifdef Q_OS_WIN
+    ID3D11Buffer *m_matrixBuffer = 0; //matrix
+    //DirectX version of above method
+    void MatrixD3D11(D3D11Shader* shader);
+    void Init(D3D11Shader* shader);
+    void Delete();
+#endif
     // Handles camera inputs
     void Inputs(int screenPosX, int screenPosY, int mouseX, int mouseY, int press_key_esc, int press_key_w, int press_key_a, int press_key_s, int press_key_d, int left_mouse_click);
 };

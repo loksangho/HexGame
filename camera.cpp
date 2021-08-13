@@ -29,21 +29,70 @@ void Camera::updateMatrix(float FOVdeg, float nearPlane, float farPlane)
 
 void Camera::Matrix(Shader& shader, const char* uniform)
 {
-    #ifdef Q_OS_WIN
-    PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
-    glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC) wglGetProcAddress("glGetUniformLocation");
+#ifdef Q_OS_WIN
+    //PFNGLGETUNIFORMLOCATIONARBPROC glGetUniformLocationARB;
+    //glGetUniformLocationARB = (PFNGLGETUNIFORMLOCATIONARBPROC) wglGetProcAddress("glGetUniformLocationARB");
 
-    PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv;
-    glUniformMatrix4fv = (PFNGLUNIFORMMATRIX4FVPROC) wglGetProcAddress("glUniformMatrix4fv");
-
-    #endif
-
-
+    //PFNGLUNIFORMMATRIX4FVARBPROC glUniformMatrix4fvARB;
+    //glUniformMatrix4fvARB = (PFNGLUNIFORMMATRIX4FVARBPROC) wglGetProcAddress("glUniformMatrix4fvARB");
 
     // Exports camera matrix
     glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
+#elif defined(Q_OS_MAC) || defined (Q_OS_LINUX)
+    glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
+#endif
+
+
+
 }
 
+#ifdef Q_OS_WIN
+void Camera::Init(D3D11Shader* shader) {
+    /*D3D11_BUFFER_DESC matrixBufferDesc;
+    ZeroMemory(&matrixBufferDesc, sizeof(matrixBufferDesc));
+    matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    matrixBufferDesc.ByteWidth = sizeof(MatrixBufferType);
+    matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    matrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    matrixBufferDesc.MiscFlags = 0;
+    matrixBufferDesc.StructureByteStride = 0;
+
+    HRESULT hr = shader->m_device->CreateBuffer(&matrixBufferDesc, NULL, &m_matrixBuffer);
+    if (FAILED(hr))
+        qFatal("Failed to create matrix buffer: 0x%x", hr);
+*/
+}
+
+void Camera::MatrixD3D11(D3D11Shader* shader) {
+
+/*
+    D3D11_MAPPED_SUBRESOURCE mappedResource;
+    //glm::mat4* dataPtr;
+    unsigned int bufferNumber;
+    glm::mat4 camMatrix = glm::transpose(cameraMatrix);
+    HRESULT hr = shader->m_context->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+    if (FAILED(hr))
+        qFatal("Failed to map matrix buffer: 0x%x", hr);
+
+
+    memcpy(mappedResource.pData, &camMatrix, sizeof(glm::mat4));
+
+    shader->m_context->Unmap(m_matrixBuffer, 0);
+
+    bufferNumber = 5;
+
+    shader->m_context->VSSetConstantBuffers(bufferNumber, 1, &m_matrixBuffer);
+
+*/
+
+}
+
+void Camera::Delete() {
+    if(m_matrixBuffer)
+        m_matrixBuffer->Release();
+}
+
+#endif
 
 
 void Camera::Inputs(int screenPosX, int screenPosY, int mouseX, int mouseY, int press_key_esc, int press_key_w, int press_key_a, int press_key_s, int press_key_d, int left_mouse_click)
@@ -54,9 +103,7 @@ void Camera::Inputs(int screenPosX, int screenPosY, int mouseX, int mouseY, int 
         if (firstClick)
         {
             QGuiApplication::setOverrideCursor(Qt::CrossCursor);
-
             //squircle->setCrossHair
-
            firstClick = false;
         }
     }
