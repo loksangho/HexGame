@@ -12,7 +12,7 @@
 
 #include <glm/glm.hpp>
 #include <vector>
-#include "Vertex.h"
+#include "vertex.h"
 
 
 

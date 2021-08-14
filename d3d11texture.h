@@ -5,6 +5,8 @@
 
 class D3D11Texture
 {
+#ifdef Q_OS_WIN
+
 public:
    // GLuint ID;
     const char* type = nullptr;
@@ -24,6 +26,7 @@ public:
     void Unbind();
     // Deletes a texture
     void Delete();
+#endif
 };
 
 #endif // D3D11TEXTURE_H

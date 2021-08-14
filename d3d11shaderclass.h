@@ -7,12 +7,17 @@
 #include <iostream>
 #include <QtQuick/QQuickItem>
 #include <QtQuick/qquickwindow.h>
+#ifdef Q_OS_WIN
+
 #include <d3d11.h>
 #include <d3dcompiler.h>
+#endif
 
 std::string get_file_contents(const char* filename);
 
 class D3D11Shader {
+#ifdef Q_OS_WIN
+
 public:
     enum Stage {
         VertexStage,
@@ -37,6 +42,7 @@ public:
     void Activate();
     void mainPass();
     void Delete();
+#endif
 
 };
 #endif // D3D11SHADERCLASS_H

@@ -15,7 +15,7 @@ BoardView3D::BoardView3D(QMainWindow* main_window, QWidget *parent) :
     ui->setupUi(this);
 
 #if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
-    ui->quickWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
+    //ui->quickWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
 #endif
 
     int colour = 0;
@@ -78,10 +78,12 @@ BoardView3D::BoardView3D(QMainWindow* main_window, QWidget *parent) :
 BoardView3D::~BoardView3D()
 {
     delete ui;
+
 }
 
 void BoardView3D::on_pushButton_clicked()
 {
+    std::cout << "here" << std::endl;
     main_window->setVisible(true);
     this->hide();
 }

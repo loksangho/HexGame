@@ -5,6 +5,7 @@
 
 #include <QFile>
 
+#ifdef Q_OS_WIN
 
 // Constructor that build the Shader Program from 2 different shaders
 D3D11Shader::D3D11Shader(const char* vertexFile, const char* fragmentFile, ID3D11Device *m_device, ID3D11DeviceContext *m_context)
@@ -164,4 +165,4 @@ void D3D11Shader::Delete()
 
 
 }
-
+#endif

@@ -1,4 +1,5 @@
 #include "d3d11mesh.h"
+#ifdef Q_OS_WIN
 
 D3D11Mesh::D3D11Mesh(D3D11Shader* shader, std::vector <Vertex>& vertices, std::vector <unsigned int>& indices, std::vector <D3D11Texture>& textures)
 {
@@ -195,3 +196,4 @@ void D3D11Mesh::Draw
     shader->m_context->DrawIndexed(indices.size(),0,0);
 
 }
+#endif

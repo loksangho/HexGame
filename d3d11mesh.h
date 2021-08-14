@@ -2,7 +2,7 @@
 #define D3D11MESH_H
 
 #include <vector>
-#include "Vertex.h"
+#include "vertex.h"
 #include "d3d11texture.h"
 #include "camera.h"
 #include <glm/glm.hpp>
@@ -10,6 +10,7 @@
 class D3D11Mesh
 {
 public:
+#ifdef Q_OS_WIN
     std::vector <Vertex> vertices;
     std::vector <unsigned int> indices;
     std::vector <D3D11Texture> textures;
@@ -38,6 +39,7 @@ public:
 
     );
     //void Draw(Shader& shader, Camera& camera);
+#endif
 };
 
 #endif // D3D11MESH_H

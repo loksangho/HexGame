@@ -1,4 +1,5 @@
 #include "d3d11texture.h"
+#ifdef Q_OS_WIN
 
 D3D11Texture::D3D11Texture(D3D11Shader* shader, const char* image, const char* texType, unsigned int slot)
 
@@ -92,3 +93,4 @@ void D3D11Texture::Delete()
     if(ppSRView)
         ppSRView->Release();
 }
+#endif
