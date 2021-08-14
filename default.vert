@@ -1,8 +1,9 @@
 #version 120
-attribute vec3 aPos;
 attribute vec3 aNormal;
-attribute vec3 aColor;
+attribute vec3 aPos;
 attribute vec2 aTex;
+attribute vec3 aColor;
+
 
 
 

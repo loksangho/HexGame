@@ -729,6 +729,7 @@ bool Squircle::eventFilter(QObject *obj, QEvent *event)
         QPoint pos = QCursor::pos();
         QWidget *widget = QApplication::widgetAt(pos);
         if (widget != NULL){
+            std::cout << std::string(widget->metaObject()->className()) << std::endl;
             if(std::string(widget->metaObject()->className()).compare("QWindowContainer") == 0) {
                 m_renderer->left_mouse_click = 1;
 
@@ -747,9 +748,21 @@ bool Squircle::eventFilter(QObject *obj, QEvent *event)
     else if(event->type() == QEvent::MouseButtonRelease && ((QMouseEvent*)event)->button() == Qt::LeftButton) {
 
         if(m_renderer){
-            m_renderer->left_mouse_click = -1;
-            event->accept();
-            return true;
+            QPoint pos = QCursor::pos();
+            QWidget *widget = QApplication::widgetAt(pos);
+            if (widget != NULL){
+                std::cout << std::string(widget->metaObject()->className()) << std::endl;
+                if(std::string(widget->metaObject()->className()).compare("QWindowContainer") == 0) {
+                    m_renderer->left_mouse_click = -1;
+                    event->accept();
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+
+
         }
 
     }
@@ -1004,16 +1017,6 @@ void SquircleRenderer::init()
             //}
             //camera->squircle = this->squircle;
         }
-
-
-        // This example relies on (deprecated) client-side pointers for the vertex
-        // input. Therefore, we have to make sure no vertex buffer is bound.
-
-
-
-
-
-
 
         // Generates Shader object using shaders default.vert and default.frag
         //if(shaderProgram == nullptr) {

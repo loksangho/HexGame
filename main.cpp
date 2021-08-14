@@ -24,8 +24,8 @@ int main(int argc, char *argv[])
 #if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGLRhi);
     QSurfaceFormat glFormat;
-    glFormat.setVersion(2,1);
-    glFormat.setProfile(QSurfaceFormat::CompatibilityProfile);
+    glFormat.setVersion(1,2);
+    glFormat.setProfile(QSurfaceFormat::CoreProfile);
     QSurfaceFormat::setDefaultFormat(glFormat);
 
 #elif defined(Q_OS_WIN)

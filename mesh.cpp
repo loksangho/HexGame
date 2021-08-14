@@ -13,10 +13,11 @@ Mesh::Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::v
     EBO EBO(indices);
     //EBO.Bind();
     // Links VBO attributes such as coordinates and colors to VAO
-    VAO1.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
-    VAO1.LinkAttrib(VBO, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
-    VAO1.LinkAttrib(VBO, 2, 3, GL_FLOAT, sizeof(Vertex), (void*)(6 * sizeof(float)));
-    VAO1.LinkAttrib(VBO, 3, 2, GL_FLOAT, sizeof(Vertex), (void*)(9 * sizeof(float)));
+    VAO1.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
+    VAO1.LinkAttrib(VBO, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
+    VAO1.LinkAttrib(VBO, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)(9 * sizeof(float)));
+    VAO1.LinkAttrib(VBO, 3, 3, GL_FLOAT, sizeof(Vertex), (void*)(6 * sizeof(float)));
+
 
     //for(Vertex v : vertices){
     //    std::cout << v.position.x << ", " << v.position.y << ", " << v.position.z << std::endl;

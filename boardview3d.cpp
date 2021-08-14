@@ -83,7 +83,6 @@ BoardView3D::~BoardView3D()
 
 void BoardView3D::on_pushButton_clicked()
 {
-    std::cout << "here" << std::endl;
     main_window->setVisible(true);
     this->hide();
 }
