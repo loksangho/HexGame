@@ -1,3 +1,4 @@
+
 #include "mainonlinewindow.h"
 #include "ui_mainonlinewindow.h"
 #include "mainwindow.h"
@@ -9,7 +10,6 @@
 #include <QProgressDialog>
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
-//#include <boost/beast/ssl.hpp>
 #include <boost/beast/websocket.hpp>
 #include <boost/beast/http/parser.hpp>
 #include <boost/beast/http/type_traits.hpp>
@@ -55,6 +55,7 @@ size_t WriteCallback(char *contents, size_t size, size_t nmemb, void *userp)
     return size * nmemb;
 }
 
+// Gets the host name and port number from the file inside the resource qrc
 void MainOnlineWindow::get_host_info_from_file() {
     QFile file(":/info/hostinfo.txt");
     if(!file.open(QIODevice::ReadOnly)) {
@@ -80,13 +81,7 @@ void MainOnlineWindow::get_host_info_from_file() {
     file.close();
 }
 
-
-
-
-
-
-
-
+// Helper functions to split string
 template <typename Out>
 void split(const std::string &s, char delim, Out result) {
     std::istringstream iss(s);
@@ -102,20 +97,12 @@ QVector<std::string> split(const std::string &s, char delim) {
     return elems;
 }
 
-
-
-
-
-
-//------------------------------------------------------------------------------
-
-
+// Checks lobby for any available games
 void MainOnlineWindow::check_lobby(std::string sessionid) {
 
     if(sessionid=="") {
         QStandardItemModel* standardModel = new QStandardItemModel(ui->listView);
         ui->listView->setModel(standardModel);
-        //ui->listView->model()->removeRows(0,ui->listView->model()->rowCount());
         return;
     }
 
@@ -125,7 +112,7 @@ void MainOnlineWindow::check_lobby(std::string sessionid) {
     int err;
     char curl_errbuf[CURL_ERROR_SIZE];
     CURL *curl3 = curl_easy_init();
-    curl_easy_setopt(curl3, CURLOPT_URL, std::string("https://aqueous-temple-80210.herokuapp.com").append(next).c_str());
+    curl_easy_setopt(curl3, CURLOPT_URL, std::string("https://").append(host).append(next).c_str());
     curl_easy_setopt(curl3, CURLOPT_HTTPGET, 1L);
     curl_easy_setopt(curl3, CURLOPT_ERRORBUFFER, curl_errbuf);
     curl_easy_setopt(curl3, CURLOPT_NOPROGRESS, 0L);
@@ -138,9 +125,7 @@ void MainOnlineWindow::check_lobby(std::string sessionid) {
     err = curl_easy_perform(curl3);
     curl_easy_cleanup(curl3);
 
-
     std::cout << docbuf2 << std::endl;
-    //ui->textEdit->setText(QString::fromStdString(docbuf2));
 
     boost::json::value val = boost::json::parse( docbuf2 );
     boost::json::object v = val.as_object();
@@ -173,6 +158,7 @@ void MainOnlineWindow::check_lobby(std::string sessionid) {
 
 }
 
+// When the selection of the available game in the selection list is changed, this is called
 void MainOnlineWindow::selectionChangedSlot(const QItemSelection & selected, const QItemSelection & deselected) {
 
     ui->joinGameButton->setEnabled(true);
@@ -193,6 +179,7 @@ MainOnlineWindow::~MainOnlineWindow()
     delete ui;
 }
 
+// This is the button that is goes back to the 'play with AI' mode, aka the main window.
 void MainOnlineWindow::on_pushButton_clicked()
 {
     MainWindow* main_window = new MainWindow();
@@ -201,7 +188,7 @@ void MainOnlineWindow::on_pushButton_clicked()
 }
 
 
-
+// This is when the login button is pressed
 void MainOnlineWindow::on_pushButton_2_clicked() //login pressed
 {
 
@@ -212,7 +199,7 @@ void MainOnlineWindow::on_pushButton_2_clicked() //login pressed
     QFile file(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).append("/login.txt"));
     std::cout << QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).append("/login.txt").toStdString() << std::endl;
     if(!file.open(QIODevice::ReadOnly)) {
-        //QMessageBox::information(0, "error", file.errorString());
+        QMessageBox::information(0, "error", file.errorString());
     }
 
     QTextStream in(&file);
@@ -234,8 +221,6 @@ void MainOnlineWindow::on_pushButton_2_clicked() //login pressed
     file.close();
 
 
-
-
     get_host_info_from_file();
 
     CustomDialog d("Login Window", this);
@@ -249,13 +234,6 @@ void MainOnlineWindow::on_pushButton_2_clicked() //login pressed
         std::cout << "You have cancelled your login" << std::endl;
         return;
     }
-
-    std::cout << "Dear " << username << " thank you for logging in..." << std::endl;
-
-
-    //check_lobby();
-    //username = "loksangho";
-    //password = "abc123";
 
 
     curl_global_init(CURL_GLOBAL_ALL);
@@ -277,14 +255,11 @@ void MainOnlineWindow::on_pushButton_2_clicked() //login pressed
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
     curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
 
-
-
-
-
-
-
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
     err = curl_easy_perform(curl);
+
+
+
 
     struct curl_slist *cookies;
     curl_easy_getinfo(curl, CURLINFO_COOKIELIST, &cookies);
@@ -353,7 +328,6 @@ void MainOnlineWindow::on_pushButton_2_clicked() //login pressed
 
      /* Post and send it. */
      curl_easy_setopt(curl2, CURLOPT_MIMEPOST, mime);
-    //std::cout << std::string("username=loksangho&password=abc123&csrfmiddlewaretoken=").append(csrfmiddlewaretoken).c_str() << std::endl;
     curl_easy_setopt(curl2, CURLOPT_COOKIE, std::string("csrftoken=").append(csrftoken).c_str());
     curl_easy_setopt(curl2, CURLOPT_HTTPHEADER, list2);
     curl_easy_setopt(curl2, CURLOPT_WRITEFUNCTION, WriteCallback);
@@ -408,6 +382,8 @@ void MainOnlineWindow::on_pushButton_2_clicked() //login pressed
 
 }
 
+
+// This function writes the login information to a particular 'safe' location when player successfully logins
 void MainOnlineWindow::write_login_to_file(std::string username, std::string password) {
     QFile file(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).append("/login.txt"));
     QDir dir;
@@ -425,27 +401,25 @@ void MainOnlineWindow::write_login_to_file(std::string username, std::string pas
     }
 }
 
+// This is called when player clicks on 'Create Game'
 void MainOnlineWindow::on_pushButton_3_clicked() //create game pressed
 {
-    //namespace pt = boost::property_tree;
-    //pt::ptree tree;
+
     ui->pushButton_3->setEnabled(false);
     get_host_info_from_file();
     std::string data = "{\"action\": \"create_game\", \"user\":\"";
     data = data.append(this->username).append("\"}");
 
-    //pt::read_json(data, tree);
 
     auto const path = std::string("/ws/play/");
-    //auto const port = this->port;
     auto const text = data;
 
      std::string ret_msg;
 
      connect_web_socket_with_text(path.c_str(), text.c_str(), &ret_msg);
-     std::cout << "Connect Success" << std::endl;
+     //std::cout << "Connect Success" << std::endl;
 
-     std::cout << "ret_msg: " << ret_msg << std::endl;
+     //std::cout << "ret_msg: " << ret_msg << std::endl;
      boost::json::value val = boost::json::parse( ret_msg );
      boost::json::object v = val.as_object();
      boost::json::string state = v["state"].as_string();
@@ -455,14 +429,11 @@ void MainOnlineWindow::on_pushButton_3_clicked() //create game pressed
      progress = new QProgressDialog("Waiting for player to join", "Abort Game", 0, 100, this);
      progress->setWindowModality(Qt::WindowModal);
      connect(progress, SIGNAL(canceled()), this, SLOT(cancel()));
-     //QTimer* t = new QTimer(this);
      QTimer::singleShot(0, this, SLOT(perform()));
-     //connect(t, SIGNAL(timeout()), this, SLOT(perform()));
-     //t->start(0);
 
 }
 
-
+// This starts a timer to check if other player has joined the created game
 void MainOnlineWindow::perform() {
     perform_timer = new QTimer(this);
     connect(perform_timer, SIGNAL(timeout()), this, SLOT(timeout()));
@@ -470,15 +441,12 @@ void MainOnlineWindow::perform() {
 }
 
 void MainOnlineWindow::timeout() {
-    //std::cout << "Timeout" << std::endl;
     // Check if other player have joined
     std::string ret_msg;
-    //std::cout << std::string("{ \"action\":\"check_joined\" , \"game_id\" : ").append(std::to_string(this->cur_game_id)).append("}") << std::endl;
-    //std::string game_id = split_words[1];
-    //boost::algorithm::trim(game_id);
+
     connect_web_socket_with_text("/ws/play/", std::string("{ \"action\":\"check_joined\" , \"game_id\" : ").append(std::to_string(this->cur_game_id)).append("}"), &ret_msg);
 
-    std::cout <<  "ret_msg: " << ret_msg << std::endl;
+    //std::cout <<  "ret_msg: " << ret_msg << std::endl;
 
     boost::json::value val = boost::json::parse( ret_msg );
     boost::json::object v = val.as_object();
@@ -501,6 +469,7 @@ void MainOnlineWindow::timeout() {
 
 }
 
+// When player who started a game clicks cancel, the game is deleted from the database
 void MainOnlineWindow::cancel() {
 
     perform_timer->stop();
@@ -518,13 +487,13 @@ void MainOnlineWindow::cancel() {
 
 }
 
+// This function writes text to the server using web socket
 void MainOnlineWindow::connect_web_socket_with_text(std::string path, std::string text, std::string* ret_msg) {
 
     get_host_info_from_file();
     std::string host = this->host;
     std::string port = this->port;
-    // The io_context is required for all I/O
-    // The io_context is required for all I/O
+
     // The io_context is required for all I/O
     websocket_endpoint endpoint;
 
@@ -536,6 +505,7 @@ void MainOnlineWindow::connect_web_socket_with_text(std::string path, std::strin
 
 }
 
+// When the player refreshes the lobby
 void MainOnlineWindow::on_refreshLobbyButton_clicked()
 {
     check_lobby(sessionid);
@@ -572,8 +542,7 @@ void MainOnlineWindow::on_joinGameButton_clicked()
     curl_easy_cleanup(curl3);
 
 
-    std::cout << docbuf2 << std::endl;
-    //ui->textEdit->setText(QString::fromStdString(docbuf2));
+    //std::cout << docbuf2 << std::endl;
 
     boost::json::value val = boost::json::parse( docbuf2 );
     boost::json::object v = val.as_object();
@@ -601,10 +570,7 @@ void MainOnlineWindow::on_joinGameButton_clicked()
         online_game_window->show_players();
         online_game_window->show();
 
-        auto const path = std::string("/ws/play/").append(this->username).append("/").append(std::to_string(game_id)).append("/").c_str();
-        //auto const port = this->port;
-
-
+        //auto const path = std::string("/ws/play/").append(this->username).append("/").append(std::to_string(game_id)).append("/").c_str();
 
 
     }
@@ -662,7 +628,7 @@ void MainOnlineWindow::on_registerAccountButton_clicked()
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
         err = curl_easy_perform(curl);
 
-        std::cout << "docbuf: " << readBuffer.size() << std::endl;
+        //std::cout << "docbuf: " << readBuffer.size() << std::endl;
         struct curl_slist *cookies;
         curl_easy_getinfo(curl, CURLINFO_COOKIELIST, &cookies);
         std::string csrfmiddlewaretoken="";
@@ -671,11 +637,11 @@ void MainOnlineWindow::on_registerAccountButton_clicked()
         std::string next = "/game/register_success/";
 
         if(cookies) {
-            std::cout << "cookies available" << std::endl;
+            //std::cout << "cookies available" << std::endl;
             struct curl_slist *cur_cookie;
             cur_cookie = cookies;
             do{
-                std::cout << "Data:" << cur_cookie->data << std::endl;
+                //std::cout << "Data:" << cur_cookie->data << std::endl;
 
                 QVector<std::string> words = split(std::string(cur_cookie->data), '\t');
 
@@ -690,12 +656,12 @@ void MainOnlineWindow::on_registerAccountButton_clicked()
         else {
             std::cout << "cookies empty" << std::endl;
         }
-        std::cout << "csrftoken: " << csrftoken << std::endl;
+        //std::cout << "csrftoken: " << csrftoken << std::endl;
         curl_slist_free_all(cookies);
         curl_easy_cleanup(curl);
          //get token here
 
-        std::cout << "csrftoken: " << csrftoken << std::endl;
+        //std::cout << "csrftoken: " << csrftoken << std::endl;
 
         int res;
         CURL *curl3 = curl_easy_init();
@@ -722,11 +688,11 @@ void MainOnlineWindow::on_registerAccountButton_clicked()
         curl_mime_data(password2_part, password1.c_str(), CURL_ZERO_TERMINATED);
         curl_mime_name(password2_part, "password2");
 
-        std::cout << "username: " << username << std::endl;
+        //std::cout << "username: " << username << std::endl;
 
-        std::cout << "password1: " << password << std::endl;
+        //std::cout << "password1: " << password << std::endl;
 
-        std::cout << "password2: " << password1 << std::endl;
+        //std::cout << "password2: " << password1 << std::endl;
 
          /* Post and send it. */
         curl_easy_setopt(curl3, CURLOPT_MIMEPOST, mime);
@@ -737,7 +703,7 @@ void MainOnlineWindow::on_registerAccountButton_clicked()
         curl_easy_setopt(curl3, CURLOPT_COOKIEFILE, "");
 
         res = curl_easy_perform(curl3);
-        std::cout << readBuffer.size() << std::endl;
+        //std::cout << readBuffer.size() << std::endl;
 
 
         struct curl_slist *cookies2;
@@ -767,18 +733,14 @@ void MainOnlineWindow::on_registerAccountButton_clicked()
         curl_easy_cleanup(curl3);
 
 
-        std::cout << "next: " << next << std::endl;
+        //std::cout << "next: " << next << std::endl;
 
-        std::cout << readBuffer.size() << std::endl;
+        //std::cout << readBuffer.size() << std::endl;
 
-        std::cout << sessionid << std::endl;
+        //std::cout << sessionid << std::endl;
 
-        std::cout << readBuffer << std::endl;
+        //std::cout << readBuffer << std::endl;
 
-
-        //ui->textEdit->setText(readBuffer.c_str());
-
-        //if(readBuffer.find("Register Success") != std::string::npos) {
         if(sessionid.compare("") != 0) {
             //Register Succeeded
             QMessageBox msgBox;
@@ -801,12 +763,7 @@ void MainOnlineWindow::on_registerAccountButton_clicked()
             std::cout << readBuffer.c_str() << std::endl;
             msgBox.exec();
         }
-
-
     }
-
-
-
 }
 
 
@@ -832,7 +789,7 @@ void MainOnlineWindow::on_logoutButton_clicked()
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
     err = curl_easy_perform(curl);
 
-    std::cout << "docbuf: " << readBuffer.size() << std::endl;
+    //std::cout << "docbuf: " << readBuffer.size() << std::endl;
 
 
     curl_easy_cleanup(curl);

@@ -1,6 +1,11 @@
 #ifndef KEYRECEIVER_H
 #define KEYRECEIVER_H
 
+/*
+ *  This is a key receiver class that handles key press events. Not really used.
+ *
+ */
+
 #include <QObject>
 
 class KeyReceiver : public QObject

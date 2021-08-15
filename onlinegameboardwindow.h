@@ -3,6 +3,10 @@
 #ifndef ONLINEGAMEBOARDWINDOW_H
 #define ONLINEGAMEBOARDWINDOW_H
 
+/*
+ *  This is the class for the window in which the players play the game in the online mode.
+ *
+ */
 
 #include "mainwindow.h"
 #include <QTimer>

@@ -26,7 +26,7 @@ OnlineGameBoardWindow::OnlineGameBoardWindow(QWidget *parent) :
     createHexagonalButtons(length,50,100,100);
     set_enable_buttons(false);
 
-    std::cout << "length: " << hex_button_vector.size() << std::endl;
+    //std::cout << "length: " << hex_button_vector.size() << std::endl;
 
 }
 
@@ -249,7 +249,7 @@ void OnlineGameBoardWindow::on_readyBbutton_clicked()
 }
 
 void OnlineGameBoardWindow::ready_to_start(boost::json::object v) {
-    std::cout << "ready to begin" << std::endl;
+    //std::cout << "ready to begin" << std::endl;
     std::string choosing_user = std::string(v["choosing_user"].as_string().c_str());
     if(choosing_user.compare(username) == 0) {
         // The current player gets to choose the colour
@@ -266,7 +266,7 @@ void OnlineGameBoardWindow::ready_to_start(boost::json::object v) {
         bool cancel_game = false;
 
 
-        std::cout << "d.exec()" << std::endl;
+        //std::cout << "d.exec()" << std::endl;
         if(d.wasCancelled()){                // If the user hit cancel, your values stay the same
             // quit game
         }
@@ -311,7 +311,7 @@ void OnlineGameBoardWindow::ready_to_start(boost::json::object v) {
 
                 }
 
-                std::cout << "Started Game" << std::endl;
+                //std::cout << "Started Game" << std::endl;
             }
         }
     }
@@ -342,7 +342,7 @@ void OnlineGameBoardWindow::timeout_check_colour() {
     boost::json::object v = val.as_object();
     boost::json::string state = v["state"].as_string();
 
-    std::cout << "check colour: " << state << std::endl;
+    //std::cout << "check colour: " << state << std::endl;
 
     if(state.compare("colour_not_ready") == 0) {
 
@@ -453,8 +453,6 @@ void OnlineGameBoardWindow::connect_web_socket_with_text(std::string path, std::
     get_host_info_from_file();
     std::string host = this->host;
     std::string port = this->port;
-    // The io_context is required for all I/O
-    // The io_context is required for all I/O
     // The io_context is required for all I/O
     websocket_endpoint endpoint;
 

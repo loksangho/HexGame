@@ -27,6 +27,9 @@ D3D11Texture::D3D11Texture(D3D11Shader* shader, const char* image, const char* t
 
     rowPitch = img.bytesPerLine();
 
+    // To get the texture working, texture2D, shader resource view and sampler state are required
+
+    // Generates the texture2D file
     ID3D11Texture2D* pTexture;
     HRESULT hr = shader->m_device->CreateTexture2D( &tDesc, NULL, &pTexture );
     if (FAILED(hr))
@@ -34,7 +37,7 @@ D3D11Texture::D3D11Texture(D3D11Shader* shader, const char* image, const char* t
 
     shader->m_context->UpdateSubresource(pTexture, 0, nullptr, img.bits(), rowPitch, 0);
 
-
+    // Shader Resource View initialisation
     D3D11_SHADER_RESOURCE_VIEW_DESC pDesc;
     ZeroMemory(&pDesc, sizeof(pDesc));
     pDesc.Format = tDesc.Format; // same as tDesc
@@ -47,6 +50,7 @@ D3D11Texture::D3D11Texture(D3D11Shader* shader, const char* image, const char* t
 
     shader->m_context->GenerateMips(ppSRView);
 
+    // Sampler initialisation
     D3D11_SAMPLER_DESC pSamplerDesc;
     ZeroMemory(&pSamplerDesc, sizeof(pSamplerDesc));
     pSamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -67,11 +71,6 @@ D3D11Texture::D3D11Texture(D3D11Shader* shader, const char* image, const char* t
         qFatal("Failed to create sampler state: 0x%x", hr);
 
 
-}
-
-void D3D11Texture::texUnit(D3D11Shader* shader, const char* uniform)
-{
-    //shader->Activate();
 }
 
 void D3D11Texture::Bind(D3D11Shader* shader)

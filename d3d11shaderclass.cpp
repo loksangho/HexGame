@@ -10,17 +10,6 @@
 // Constructor that build the Shader Program from 2 different shaders
 D3D11Shader::D3D11Shader(const char* vertexFile, const char* fragmentFile, ID3D11Device *m_device, ID3D11DeviceContext *m_context)
 {
-    // Read vertexFile and fragmentFile and store the strings
-    //std::string vertexCode = get_file_contents(vertexFile);
-   // std::string fragmentCode = get_file_contents(fragmentFile);
-
-    // Convert the shader source strings into character arrays
-    //const char* vertexSource = vertexCode.c_str();
-    //const char* fragmentSource = fragmentCode.c_str();
-
-    // Create Vertex Shader Object and get its reference
-
-
 
     this->m_device = m_device;
     this->m_context = m_context;
@@ -53,11 +42,9 @@ D3D11Shader::D3D11Shader(const char* vertexFile, const char* fragmentFile, ID3D1
     Q_ASSERT(!m_frag.isEmpty());
     m_fragEntryPoint = QByteArrayLiteral("main");
 
-
-
-
 }
 
+// Compiles the shaders
 void D3D11Shader::compileShader()
 {
     const char *target;
@@ -106,6 +93,7 @@ void D3D11Shader::compileShader()
 
 }
 
+// Runs at every pass, enables shader, depth stencil, blend, etc.
 void D3D11Shader::mainPass() {
     m_context->VSSetShader(m_vs, nullptr, 0);
     m_context->PSSetShader(m_ps, nullptr, 0);

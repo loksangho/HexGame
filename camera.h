@@ -1,5 +1,12 @@
 #ifndef CAMERA_CLASS_H
 #define CAMERA_CLASS_H
+
+/*
+ *  This class provides camera movement in the 3D mode.
+ *
+ */
+
+
 #include "qglobal.h"
 
 
@@ -28,21 +35,13 @@ class Camera
 {
 public:
     // Stores the main vectors of the camera
-//#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     glm::vec3 Position;
     glm::vec3 Orientation = glm::vec3(0.0f, 0.0f, -1.0f);
     glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
     glm::mat4 cameraMatrix = glm::mat4(1.0f);
     glm::mat4 view;
     glm::mat4 projection;
-/*#elif defined(Q_OS_WIN)
-    D3DXVECTOR3 Position;
-    D3DXVECTOR3 Orientation = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
-    D3DXVECTOR3 Up = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-    D3DXMATRIX cameraMatrix;
-    D3DXMATRIX view;
-    D3DXMATRIX projection;*/
-//#endif
+
     float FOVdeg = 45.0f;
 
     // Prevents the camera from jumping around when first clicking left click
@@ -54,7 +53,7 @@ public:
 
     // Adjust the speed of the camera and it's sensitivity when looking around
     float speed = 0.7f;
-    float sensitivity = 10.0f;
+    float sensitivity = 100.0f;
 
 
     // Camera constructor to set up initial values
@@ -66,9 +65,7 @@ public:
     void Matrix(Shader& shader, const char* uniform);
 #ifdef Q_OS_WIN
     ID3D11Buffer *m_matrixBuffer = 0; //matrix
-    //DirectX version of above method
-    void MatrixD3D11(D3D11Shader* shader);
-    void Init(D3D11Shader* shader);
+
     void Delete();
 #endif
     // Handles camera inputs

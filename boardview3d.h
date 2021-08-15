@@ -1,6 +1,11 @@
 #ifndef BOARDVIEW3D_H
 #define BOARDVIEW3D_H
 
+/*
+ *  This class provides a window for the 3D mode of the game.
+ *
+ */
+
 #include <QWidget>
 #include <QMainWindow>
 #include "squircle.h"
@@ -15,6 +20,7 @@ class BoardView3D : public QWidget
 
 public:
     explicit BoardView3D(QMainWindow* main_window, QWidget *parent = nullptr);
+    void init(int board_length, int colour, int difficulty);
     ~BoardView3D();
     QMainWindow* main_window;
 

@@ -1,6 +1,11 @@
 #ifndef MESH_CLASS_H
 #define MESH_CLASS_H
 
+/*
+ *  This is the mesh class for OpenGL implementation of the 3D mode (Mac and Linux).
+ *
+ */
+
 #include<string>
 
 #include"vao.h"

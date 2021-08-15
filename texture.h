@@ -1,6 +1,11 @@
 #ifndef TEXTURE_CLASS_H
 #define TEXTURE_CLASS_H
 
+/*
+ *  This is the class handling the texture for the OpenGL implementation of the 3D mode (Mac and Linux)
+ *
+ */
+
 #include "qglobal.h"
 
 #define GL_GLEXT_PROTOTYPES

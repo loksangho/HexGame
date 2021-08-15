@@ -1,6 +1,11 @@
 #ifndef MODEL_CLASS_H
 #define MODEL_CLASS_H
 
+/*
+ *  This is the model class for both Direct3D 11 and OpenGL implementation of the 3D mode.
+ *
+ */
+
 #include<json/json.hpp>
 #include"mesh.h"
 #include "d3d11mesh.h"

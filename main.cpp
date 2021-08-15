@@ -13,8 +13,6 @@
 int main(int argc, char *argv[])
 {
 
-    //QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
-
     QApplication a(argc, argv);
     MainWindow w;
 
@@ -32,21 +30,13 @@ int main(int argc, char *argv[])
     QQuickWindow::setGraphicsApi(QSGRendererInterface::Direct3D11Rhi);
 #endif
 
-    //QQuickView *view = new QQuickView;
-    //view->setSource(QUrl::fromLocalFile(":/scenegraph/openglunderqml/main.qml"));
-    //view->show();
-
-
     QFile File(":/qss/stylesheet.qss");
     File.open(QFile::ReadOnly);
     QString StyleSheet = QString(File.readAll());
-
-
 
     a.setStyleSheet(StyleSheet);
     w.show();
     int ret = a.exec();
 
     return ret;
-    //return 0;
 }

@@ -204,16 +204,16 @@
    <widget class="QLabel" name="loggedInStatus">
     <property name="geometry">
      <rect>
-      <x>530</x>
+      <x>380</x>
       <y>30</y>
-      <width>601</width>
+      <width>751</width>
       <height>41</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Copperplate</family>
-      <pointsize>36</pointsize>
+      <pointsize>20</pointsize>
      </font>
     </property>
     <property name="text">

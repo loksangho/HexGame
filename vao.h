@@ -3,6 +3,11 @@
 #define GL_SILENCE_DEPRECATION
 #define GL_GLEXT_PROTOTYPES
 
+/*
+ *  This is the vertex array class for the OpenGL implementation (Mac and Linux).
+ *
+ */
+
 #include "qglobal.h"
 
 #include "vbo.h"

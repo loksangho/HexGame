@@ -3,42 +3,12 @@
 
 D3D11Mesh::D3D11Mesh(D3D11Shader* shader, std::vector <Vertex>& vertices, std::vector <unsigned int>& indices, std::vector <D3D11Texture>& textures)
 {
-/*
-    vertices = std::vector<Vertex>();
-    Vertex v1;
-    v1.position = glm::vec3(-1,-1,0);
-    v1.normal = glm::vec3(0,0,1);
-    v1.color = glm::vec3(1,1,1);
-    v1.texUV = glm::vec2(0,1);
-    Vertex v2;
-    v2.position = glm::vec3(1,-1,0);
-    v2.normal = glm::vec3(0,0,1);
-    v2.color = glm::vec3(1,1,1);
-    v2.texUV = glm::vec2(1,1);
-    Vertex v3;
-    v3.position = glm::vec3(0,1,0);
-    v3.normal = glm::vec3(0,0,1);
-    v3.color = glm::vec3(1,1,1);
-    v3.texUV = glm::vec2(0.5,0);
-    vertices.push_back(v1);
-    vertices.push_back(v2);
-    vertices.push_back(v3);
-
-    indices=std::vector<unsigned int>();
-    indices.push_back(0);
-    indices.push_back(2);
-    indices.push_back(1);
-
-    textures = std::vector <D3D11Texture>();
-    textures.push_back(D3D11Texture(shader, ":/models/stone01.tga", "diffuse", 0));
-*/
-
 
     D3D11Mesh::vertices = vertices;
     D3D11Mesh::indices = indices;
     D3D11Mesh::textures = textures;
 
-
+    // Creates the vertex buffer
     D3D11_BUFFER_DESC bufDesc;
     ZeroMemory(&bufDesc, sizeof(bufDesc));
     bufDesc.ByteWidth = vertices.size() * sizeof(Vertex);
@@ -50,6 +20,7 @@ D3D11Mesh::D3D11Mesh(D3D11Shader* shader, std::vector <Vertex>& vertices, std::v
 
     shader->m_context->UpdateSubresource(m_vbuf, 0, nullptr, vertices.data(), 0, 0);
 
+    // Creates the index buffer
     D3D11_BUFFER_DESC indbufDesc;
     ZeroMemory(&indbufDesc,sizeof(indbufDesc));
     indbufDesc.ByteWidth = indices.size() * sizeof(unsigned int);
@@ -58,19 +29,13 @@ D3D11Mesh::D3D11Mesh(D3D11Shader* shader, std::vector <Vertex>& vertices, std::v
     indbufDesc.CPUAccessFlags  = 0;
     indbufDesc.MiscFlags       = 0;
 
-    // Define the resource data.
-    //D3D11_SUBRESOURCE_DATA InitData;
-    //InitData.pSysMem = indices.data();
-    //InitData.SysMemPitch = 0;
-    //InitData.SysMemSlicePitch = 0;
-
     hr = shader->m_device->CreateBuffer(&indbufDesc, nullptr, &m_indbuf);
     if (FAILED(hr))
         qFatal("Failed to create index buffer: 0x%x", hr);
 
     shader->m_context->UpdateSubresource(m_indbuf, 0, nullptr, indices.data(), 0, 0);
 
-
+    // Creates the input layout. This contains information about which variable goes into the vertex shader input
     D3D11_INPUT_ELEMENT_DESC inputDesc[4];
     ZeroMemory(inputDesc, sizeof(inputDesc));
     inputDesc[0].SemanticName = "POSITION";
@@ -140,9 +105,6 @@ void D3D11Mesh::Draw
     glm::quat rotation,
     glm::vec3 scale
         ) {
-    //shader->Activate();
-
-    camera.MatrixD3D11(shader);
 
     const UINT stride = sizeof(Vertex); // vertex
     const UINT offset = 0;
@@ -181,93 +143,17 @@ void D3D11Mesh::Draw
     rot = glm::mat4_cast(rotation);
     sca = glm::scale(sca, scale);
 
-/*
-    TranslationBuffer transBuffer;
-    transBuffer.translation = glm::transpose(trans);
-
-    RotationBuffer rotBuffer;
-    rotBuffer.rotation = glm::transpose(rot);
-
-    ScaleBuffer scaBuffer;
-    scaBuffer.scale = glm::transpose(sca);
-*/
-
 
     CamMatrixBufferType camMatrixBuffer;
-    //D3DXMATRIX transposed_mvp;
-    //D3DXMATRIX mvp = GLM_D3DX_Helper::ConvertMatrix(matrix * trans * rot * sca) * camera.cameraMatrix;
-    //D3DXMatrixTranspose(&transposed_mvp, &mvp);
+
     camMatrixBuffer.camMatrix = glm::transpose(camera.cameraMatrix*sca*rot*trans*matrix) ;
-    //
 
-
-   /* //Do this for translation buffer
-    D3D11_BUFFER_DESC cbufDesc;
-    ZeroMemory(&cbufDesc, sizeof(cbufDesc));
-    cbufDesc.Usage = D3D11_USAGE_DYNAMIC;
-    cbufDesc.ByteWidth = sizeof(TranslationBuffer);
-    cbufDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    cbufDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    cbufDesc.MiscFlags = 0;
-    cbufDesc.StructureByteStride = 0;
-    D3D11_SUBRESOURCE_DATA InitData;
-    InitData.pSysMem = &transBuffer;
-    InitData.SysMemPitch = 0;
-    InitData.SysMemSlicePitch = 0;
-    HRESULT hr = shader->m_device->CreateBuffer(&cbufDesc, &InitData, &m_transbuf);
-    if (FAILED(hr))
-        qFatal("Failed to create translation constant buffer: 0x%x", hr);
-
-    shader->m_context->UpdateSubresource(m_transbuf, 0 , 0, &transBuffer, 0, 0);
-    shader->m_context->VSSetConstantBuffers(1, 1, &m_transbuf); // first parameter is buffer number and it's 1
-
-    //Do this for rotation buffer
-    ZeroMemory(&cbufDesc, sizeof(cbufDesc));
-    cbufDesc.Usage = D3D11_USAGE_DYNAMIC;
-    cbufDesc.ByteWidth = sizeof(RotationBuffer);
-    cbufDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    cbufDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    cbufDesc.MiscFlags = 0;
-    cbufDesc.StructureByteStride = 0;
-    InitData.pSysMem = &rotBuffer;
-    InitData.SysMemPitch = 0;
-    InitData.SysMemSlicePitch = 0;
-    hr = shader->m_device->CreateBuffer(&cbufDesc, &InitData, &m_rotbuf);
-    if (FAILED(hr))
-        qFatal("Failed to create rotation constant buffer: 0x%x", hr);
-
-    shader->m_context->UpdateSubresource(m_rotbuf, 0 , 0, &rotBuffer, 0, 0);
-    shader->m_context->VSSetConstantBuffers(2, 1, &m_rotbuf);
-
-
-    //Do this for scale buffer
-    ZeroMemory(&cbufDesc, sizeof(cbufDesc));
-    cbufDesc.Usage = D3D11_USAGE_DYNAMIC;
-    cbufDesc.ByteWidth = sizeof(ScaleBuffer);
-    cbufDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    cbufDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    cbufDesc.MiscFlags = 0;
-    cbufDesc.StructureByteStride = 0;
-    InitData.pSysMem = &scaBuffer;
-    InitData.SysMemPitch = 0;
-    InitData.SysMemSlicePitch = 0;
-    hr = shader->m_device->CreateBuffer(&cbufDesc, &InitData, &m_scabuf);
-    if (FAILED(hr))
-        qFatal("Failed to create rotation constant buffer: 0x%x", hr);
-
-    shader->m_context->UpdateSubresource(m_scabuf, 0 , 0, &scaBuffer, 0, 0);
-    shader->m_context->VSSetConstantBuffers(3, 1, &m_scabuf);
-*/
-    //Do this for model buffer
+    // Constant buffer initialisation for the model-view-projection matrix
     D3D11_BUFFER_DESC cbufDesc;
     ZeroMemory(&cbufDesc, sizeof(cbufDesc));
     cbufDesc.Usage = D3D11_USAGE_DEFAULT;
     cbufDesc.ByteWidth = sizeof(CamMatrixBufferType);
     cbufDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    //cbufDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    //cbufDesc.MiscFlags = 0;
-    //cbufDesc.StructureByteStride = 0;
-
 
 
     D3D11_SUBRESOURCE_DATA InitData;
@@ -283,7 +169,7 @@ void D3D11Mesh::Draw
 
     shader->m_context->VSSetConstantBuffers(0, 1, &m_modelbuf);
 
-
+    // Draws the element
     shader->m_context->DrawIndexed(indices.size(),0,0);
 
 }

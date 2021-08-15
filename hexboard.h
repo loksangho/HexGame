@@ -3,6 +3,11 @@
 #ifndef HEXBOARD_H
 #define HEXBOARD_H
 
+/*
+ *  This is the HexBoard class which provides functionality for playing the game.
+ *
+ */
+
 #include "graph.h"
 #include <QPair>
 #include <QString>

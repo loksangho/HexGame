@@ -1,6 +1,12 @@
 #ifndef D3D11SHADERCLASS_H
 #define D3D11SHADERCLASS_H
 
+/*
+ *  This is the shader class for Direct3D 11 implementation of the 3D mode.
+ *
+ */
+
+
 #include <string>
 #include <fstream>
 #include <sstream>

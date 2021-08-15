@@ -1,3 +1,8 @@
+/*
+ *  This is a class that provides web socket functionality with the remote server
+ *
+ */
+
 #pragma once
 
 #ifndef CONNECTION_METADATA_H

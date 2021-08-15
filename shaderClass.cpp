@@ -18,9 +18,6 @@ std::string get_file_contents(const char* filename) {
 
     File.close();
 
-    //std::string final = QString(content).toStdString();
-
-
     return content.toStdString();
 
 }
@@ -37,30 +34,6 @@ Shader::Shader(const char* vertexFile, const char* fragmentFile)
     const char* fragmentSource = fragmentCode.c_str();
 
     // Create Vertex Shader Object and get its reference
-
-#ifdef Q_OS_WIN
-    //PFNGLCREATESHADERPROC glCreateShader;
-    //glCreateShader = (PFNGLCREATESHADERPROC) wglGetProcAddress("glCreateShader");
-
-    //PFNGLSHADERSOURCEPROC glShaderSource;
-    //glShaderSource = (PFNGLSHADERSOURCEPROC) wglGetProcAddress("glShaderSource");
-
-    //PFNGLCOMPILESHADERPROC glCompileShader;
-    //glCompileShader = (PFNGLCOMPILESHADERPROC) wglGetProcAddress("glCompileShader");
-
-    //PFNGLCREATEPROGRAMPROC glCreateProgram;
-    //glCreateProgram = (PFNGLCREATEPROGRAMPROC) wglGetProcAddress("glCreateProgram");
-
-    //PFNGLATTACHSHADERPROC glAttachShader;
-    //glAttachShader = (PFNGLATTACHSHADERPROC) wglGetProcAddress("glAttachShader");
-
-    //PFNGLLINKPROGRAMPROC glLinkProgram;
-    //glLinkProgram = (PFNGLLINKPROGRAMPROC) wglGetProcAddress("glLinkProgram");
-
-    //PFNGLDELETESHADERPROC glDeleteShader;
-    //glDeleteShader = (PFNGLDELETESHADERPROC) wglGetProcAddress("glDeleteShader");
-
-#endif
 
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     // Attach Vertex Shader source to the Vertex Shader Object
@@ -98,20 +71,12 @@ Shader::Shader(const char* vertexFile, const char* fragmentFile)
 // Activates the Shader Program
 void Shader::Activate()
 {
-#ifdef Q_OS_WIN
-    //PFNGLUSEPROGRAMPROC glUseProgram;
-    //glUseProgram = (PFNGLUSEPROGRAMPROC) wglGetProcAddress("glUseProgram");
-#endif
     glUseProgram(ID);
 }
 
 // Deletes the Shader Program
 void Shader::Delete()
 {
-#ifdef Q_OS_WIN
-    //PFNGLDELETEPROGRAMPROC glDeleteProgram;
-    //glDeleteProgram = (PFNGLDELETEPROGRAMPROC) wglGetProcAddress("glDeleteProgram");
-#endif
     glDeleteProgram(ID);
 }
 
@@ -119,19 +84,6 @@ void Shader::Delete()
 void Shader::compileErrors(unsigned int shader, const char* type)
 {
 
-#ifdef Q_OS_WIN
-    //PFNGLGETSHADERIVPROC glGetShaderiv;
-    //glGetShaderiv = (PFNGLGETSHADERIVPROC) wglGetProcAddress("glGetShaderiv");
-
-    //PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog;
-    //glGetShaderInfoLog = (PFNGLGETSHADERINFOLOGPROC) wglGetProcAddress("glGetShaderInfoLog");
-
-    //PFNGLGETPROGRAMIVPROC glGetProgramiv;
-    //glGetProgramiv = (PFNGLGETPROGRAMIVPROC) wglGetProcAddress("glGetProgramiv");
-
-    //PFNGLGETPROGRAMINFOLOGPROC glGetProgramInfoLog;
-    //glGetProgramInfoLog = (PFNGLGETPROGRAMINFOLOGPROC) wglGetProcAddress("glGetProgramInfoLog");
-#endif
     // Stores status of compilation
     GLint hasCompiled;
     // Character array to store error message in

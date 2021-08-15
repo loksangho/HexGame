@@ -3,6 +3,10 @@
 #include "qglobal.h"
 #include <glm/glm.hpp>
 
+/*
+ *  This is a class with useful struct definitions for the 3D mode.
+ *
+ */
 
 // Structure to standardize the vertices used in the meshes
 struct Vertex

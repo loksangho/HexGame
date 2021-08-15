@@ -9,7 +9,6 @@ Colour HexBoard::get_colour(int x){
 }
 
 Colour HexBoard::get_colour_trial(int x) {
-    //std::cout << trial_nodes[x] << std::endl;
     return trial_nodes[x];
 }
 

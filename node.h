@@ -3,6 +3,10 @@
 #ifndef NODE_H
 #define NODE_H
 
+/*
+ *  This is the class representing a node of the graph for the game logic.
+ *
+ */
 
 #include "colour.h"
 

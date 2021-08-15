@@ -3,6 +3,10 @@
 #include "qglobal.h"
 #define GL_GLEXT_PROTOTYPES
 
+/*
+ *  This is the vertex buffer class for the OpenGL implementation (Mac and Linux).
+ *
+ */
 
 #ifdef Q_OS_WIN
     #include<QOpenGLFunctions>

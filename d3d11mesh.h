@@ -1,6 +1,12 @@
 #ifndef D3D11MESH_H
 #define D3D11MESH_H
 
+/*
+ *  This is for Direct3D 11 implementation (Windows only) of the 3D mode.
+ *
+ */
+
+
 #include <vector>
 #include "vertex.h"
 #include "d3d11texture.h"

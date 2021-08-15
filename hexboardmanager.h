@@ -1,5 +1,11 @@
 #ifndef HEXBOARDMANAGER_H
 #define HEXBOARDMANAGER_H
+
+/*
+ *  This is a helper class for the hex game logic. It is inherited by other classes in different modes (3D, 2D with AI)
+ *
+ */
+
 #include "hexbutton.h"
 #include "colour.h"
 #include "mywidget.h"

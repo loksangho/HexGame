@@ -3,6 +3,11 @@
 #ifndef MYWIDGET_H
 #define MYWIDGET_H
 
+/*
+ *  This class draws the blue and red side bars to the board in a dynamic way.
+ *
+ */
+
 #include <QWidget>
 
 class MyWidget : public QWidget

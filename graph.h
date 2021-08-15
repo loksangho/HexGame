@@ -2,6 +2,12 @@
 
 #ifndef GRAPH_H
 #define GRAPH_H
+
+/*
+ *  This is a class for game logic. It provides a graph for the board.
+ *
+ */
+
 #include <QVector>
 #include <iostream>
 #include "node.h"

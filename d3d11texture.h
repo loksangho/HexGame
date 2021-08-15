@@ -1,6 +1,11 @@
 #ifndef D3D11TEXTURE_H
 #define D3D11TEXTURE_H
 
+/*
+ *  This is the texture class for Direct3D 11 implementation of the 3D mode.
+ *
+ */
+
 #include "d3d11shaderclass.h"
 
 class D3D11Texture
@@ -18,8 +23,6 @@ public:
     D3D11Texture(D3D11Shader* shader, const char* image, const char* texType, unsigned int slot);
     ~D3D11Texture() {}
 
-    // Assigns a texture unit to a texture
-    void texUnit(D3D11Shader* shader, const char* uniform);
     // Binds a texture
     void Bind(D3D11Shader* shader);
     // Unbinds a texture

@@ -3,6 +3,11 @@
 #ifndef HEXBUTTON_H
 #define HEXBUTTON_H
 
+/*
+ *  This is not really used, will be deleted eventually.
+ *
+ */
+
 #include <QPushButton>
 
 class HexButton : public QPushButton

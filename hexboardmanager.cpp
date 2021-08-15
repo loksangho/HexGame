@@ -4,6 +4,8 @@
 #include <QObject>
 
 
+unsigned int board_length = 11;
+
 HexBoardManager::HexBoardManager() {
 
 }
@@ -23,7 +25,7 @@ void HexBoardManager::set_button_colour(int button_index, Colour c) {
 
 void HexBoardManager::start_game() {
 
-    board = new HexBoard(11);
+    board = new HexBoard(board_length);
 
     for(int i=0; i<hex_button_vector.size(); i++) {
         set_button_colour(i, Colour::EMPTY);
@@ -55,8 +57,9 @@ void  HexBoardManager::set_enable_buttons(bool b) {
     }
 }
 
+// Converts from double to int
 int HexBoardManager::convertToInt(double d) {
-   d = d + 0.5 - (d<0); // x is now 55.499999...
+   d = d + 0.5 - (d<0);
    return (int)d;
 
 }

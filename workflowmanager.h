@@ -2,6 +2,13 @@
 
 #ifndef WORKFLOWMANAGER_H
 #define WORKFLOWMANAGER_H
+
+
+/*
+ *  This is a helper class for the game logic. Not really used.
+ *
+ */
+
 #include "node.h"
 #include "graph.h"
 #include "hexboard.h"

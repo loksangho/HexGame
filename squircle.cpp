@@ -79,7 +79,7 @@
 #include <QTimer>
 #include <QOpenGLContext>
 #include <QQuickRenderTarget>
-
+#include <QPen>
 
 
 unsigned int width;
@@ -405,31 +405,11 @@ void SquircleRenderer::frameStart()
     Q_ASSERT(m_context);
 
 
-    if(!d3d11ShaderProgram)  {
-        d3d11ShaderProgram = new D3D11Shader(":/default/D3D11_squircle.vert", ":/default/D3D11_squircle.frag", m_device, m_context);
-        d3d11ShaderProgram->Activate();
-
-        model = new Model(d3d11ShaderProgram,":/models/cube_robot/robot.dae");
-        model_table = new Model(d3d11ShaderProgram,":/models/table/table.dae");
-        model_ball = new Model(d3d11ShaderProgram,":/models/sphere/sphere.dae");
-
-        model_red_blocks = new Model(d3d11ShaderProgram,":/models/hexagon3D/red_blocks.dae");
-        model_blue_blocks = new Model(d3d11ShaderProgram,":/models/hexagon3D/blue_blocks.dae");
-        model_neutral_hexagon = new Model(d3d11ShaderProgram,":/models/hexagon3D/hexagon3D_blender.dae");
-        model_red_hexagon = new Model(d3d11ShaderProgram,":/models/hexagon3D/hexagon3D_blender_red.dae");
-        model_blue_hexagon = new Model(d3d11ShaderProgram,":/models/hexagon3D/hexagon3D_blender_blue.dae");
-
-    }
-
-    init();
-
-
-
     if (!m_initialized) {
         D3D11Init();
     }
 
-
+    init();
 
 }
 
@@ -442,7 +422,7 @@ void SquircleRenderer::mainPassRecordingStart()
     m_window->setColor(QColor(125,125,125,255));
 
     camera->Inputs(this->screenPosX, this->screenPosY, this->mouseX, this->mouseY, this->press_key_esc, this->press_key_w, this->press_key_a, this->press_key_s, this->press_key_d, this->left_mouse_click);
-    camera->updateMatrix(45.0f, 0.1f, 10000.0f);
+    camera->updateMatrix(45.0f, 0.1f, 1000.0f);
 
 
     D3D11_VIEWPORT v;
@@ -462,7 +442,7 @@ void SquircleRenderer::mainPassRecordingStart()
 
     }
     float deltaTime = 0.0167;
-    float max_age = 0.3f;
+    float max_age = 1.0f;
 
     // Steps through the physics simulation with deltaTime and determines which (ball) rigidbodies are past the max_age (and deletes them)s
     dynamicsWorld->stepSimulation(deltaTime,1);
@@ -530,26 +510,14 @@ void SquircleRenderer::mainPassRecordingStart()
 
     for(int i=0 ; i < board_length ; i++) {
         for (int j=0; j< board_length; j++){
-            //if(i==board_length-1 && j==board_length-1) break;
             Model* hexagon_model = models_neutral_hexagon[j+i*board_length]->hexagon_model;
             glm::mat4 matrices = hexagon_matrices_meshes[i*board_length+j];
             hexagon_model->DrawD3D11(d3d11ShaderProgram, *camera, matrices, false);
 
-            //std::cout << hexagon_matrices_meshes[i*board_length+j][0][0] << " " << hexagon_matrices_meshes[i*board_length+j][1][0] << " " << hexagon_matrices_meshes[i*board_length+j][2][0] << " " << hexagon_matrices_meshes[i*board_length+j][3][0] << " " << std::endl;
-            //std::cout << hexagon_matrices_meshes[i*board_length+j][0][1] << " " << hexagon_matrices_meshes[i*board_length+j][1][1] << " " << hexagon_matrices_meshes[i*board_length+j][2][1] << " " << hexagon_matrices_meshes[i*board_length+j][3][1] << " " << std::endl;
-            //std::cout << hexagon_matrices_meshes[i*board_length+j][0][2] << " " << hexagon_matrices_meshes[i*board_length+j][1][2] << " " << hexagon_matrices_meshes[i*board_length+j][2][2] << " " << hexagon_matrices_meshes[i*board_length+j][3][2] << " " << std::endl;
-            //std::cout << hexagon_matrices_meshes[i*board_length+j][0][3] << " " << hexagon_matrices_meshes[i*board_length+j][1][3] << " " << hexagon_matrices_meshes[i*board_length+j][2][3] << " " << hexagon_matrices_meshes[i*board_length+j][3][3] << " " << std::endl;
-            //std::cout << std::endl;
-
         }
     }
-
-
     m_window->endExternalCommands();
-
 }
-
-
 
 
 #endif
@@ -622,7 +590,7 @@ void SquircleRenderer::trigger_mouse_click_action() {
             set_button_colour(index, player_colour);
             prev_hex_colour = player_colour==Colour::BLUE?model_blue_hexagon: model_red_hexagon;
             aiplay->board->make_move(index%board_length, index/board_length, player_colour);
-            //std::cout << *aiplay->board << std::endl;
+
             Colour winner = aiplay->board->has_winner(false);
             if(winner != Colour::EMPTY) {
 
@@ -652,7 +620,7 @@ void SquircleRenderer::trigger_mouse_click_action() {
 
     }
     else if(winner_declared && currently_hovering != nullptr) { // if winner is declared and user presses the mouse, then reset the board
-        //aiplay->board = new HexBoard(board_length);
+
         for (HexagonObjectPointer* obj : models_neutral_hexagon) {
             obj->hexagon_model = model_neutral_hexagon;
         }
@@ -689,8 +657,7 @@ void SquircleRenderer::trigger_mouse_click_action() {
         movingRigidBodiesAge.push_back(0);
         QTimer::singleShot(500, this, SLOT(resetsBallThrow()));
         can_throw = false;
-        //delete ballShape;
-        //delete motionstate;
+
     }
 }
 
@@ -719,6 +686,7 @@ bool Squircle::eventFilter(QObject *obj, QEvent *event)
                 m_renderer->trigger_mouse_click_action();
 
                 inPlayWindow = true;
+
                 event->accept();
                 return true;
             }
@@ -745,6 +713,12 @@ bool Squircle::eventFilter(QObject *obj, QEvent *event)
             }
         }
 
+    }
+    else if(event->type() == QEvent::MouseMove) {
+        if(inPlayWindow) {
+            event->accept();
+            return true;
+        }
     }
 
     // Other event type checks here...
@@ -778,27 +752,18 @@ unsigned int indices[] = {
 void SquircleRenderer::D3D11Init() {
 
         m_initialized = true;
+        d3d11ShaderProgram = new D3D11Shader(":/default/D3D11_squircle.vert", ":/default/D3D11_squircle.frag", m_device, m_context);
+        d3d11ShaderProgram->Activate();
 
+        model = new Model(d3d11ShaderProgram,":/models/cube_robot/robot.dae");
+        model_table = new Model(d3d11ShaderProgram,":/models/table/table.dae");
+        model_ball = new Model(d3d11ShaderProgram,":/models/sphere/sphere.dae");
 
-
-        camera->Init(d3d11ShaderProgram);
-
-
-
-
-       /* bufDesc.ByteWidth = 256;
-        bufDesc.Usage = D3D11_USAGE_DYNAMIC;
-        bufDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-        bufDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-        hr = m_device->CreateBuffer(&bufDesc, nullptr, &m_cbuf);
-        if (FAILED(hr))
-            qFatal("Failed to create buffer: 0x%x", hr);
-*/
-
-
-
-
-
+        model_red_blocks = new Model(d3d11ShaderProgram,":/models/hexagon3D/red_blocks.dae");
+        model_blue_blocks = new Model(d3d11ShaderProgram,":/models/hexagon3D/blue_blocks.dae");
+        model_neutral_hexagon = new Model(d3d11ShaderProgram,":/models/hexagon3D/hexagon3D_blender.dae");
+        model_red_hexagon = new Model(d3d11ShaderProgram,":/models/hexagon3D/hexagon3D_blender_red.dae");
+        model_blue_hexagon = new Model(d3d11ShaderProgram,":/models/hexagon3D/hexagon3D_blender_blue.dae");
 }
 #endif
 
@@ -821,11 +786,8 @@ void SquircleRenderer::init()
 
         if(camera == nullptr) {
             camera = new Camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
-//#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
             camera->Position = glm::vec3(0,15,20);
-//#elif defined(Q_OS_WIN)
-//            camera->Position = D3DXVECTOR3(0,15,20);
-//#endif
+
 
             float scale_offset=0.3f;
             float x_offset = -1.8f;
@@ -981,23 +943,16 @@ void SquircleRenderer::init()
                 btTransform worldTransform;
                 rigidBody->getMotionState()->getWorldTransform(worldTransform);
 
-                //delete convexHullCollisionShape;
-                //delete motionstate;
-
 
                 // Small hack : store the mesh's index "i" in Bullet's User Pointer.
                 // Will be used to know which object is picked.
                 // A real program would probably pass a "MyGameObjectPointer" instead.
                 rigidBody->setUserPointer((void*) models_neutral_hexagon[k]);
 
-                //delete motionstate;
-                //std::cout << "here4" << std::endl;
+
 
            }
-            //for(int i=0; i< dynamicsWorld->getCollisionWorld()->getNumCollisionObjects(); i++){
-            //std::cout << dynamicsWorld->getCollisionWorld()->getCollisionObjectArray()[i]->getWorldTransform().getOrigin().getX() << "," << dynamicsWorld->getCollisionWorld()->getCollisionObjectArray()[i]->getWorldTransform().getOrigin().getY() << "," << dynamicsWorld->getCollisionWorld()->getCollisionObjectArray()[i]->getWorldTransform().getOrigin().getZ() << std::endl;
-            //}
-            //camera->squircle = this->squircle;
+
         }
 
         // Generates Shader object using shaders default.vert and default.frag
@@ -1062,25 +1017,14 @@ void SquircleRenderer::pick_object() {
 
     // The Projection matrix goes from Camera Space to NDC.
     // So inverse(ProjectionMatrix) goes from NDC to Camera Space.
-//#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     glm::mat4 InverseProjectionMatrix = glm::inverse(camera->projection);
-/*#elif defined(Q_OS_WIN)
-    D3DXMATRIX InverseProjectMatrixD3DX;
-    D3DXMATRIX CameraProjection = camera->projection;
-    float determinant;
-    D3DXMatrixInverse(&InverseProjectMatrixD3DX, &determinant, &CameraProjection);
-    glm::mat4 InverseProjectionMatrix = GLM_D3DX_Helper::ConvertMatrix(InverseProjectMatrixD3DX);
 
-#endif*/
 
 
     // The View Matrix goes from World Space to Camera Space.
     // So inverse(ViewMatrix) goes from Camera Space to World Space.
-//#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     glm::mat4 InverseViewMatrix = glm::inverse(camera->view);
-//#elif defined(Q_OS_WIN)
-//    glm::mat4 InverseViewMatrix = glm::inverse(GLM_D3DX_Helper::ConvertMatrix(camera->view));
-//#endif
+
     glm::vec4 lRayStart_camera = InverseProjectionMatrix * lRayStart_NDC;    lRayStart_camera/=lRayStart_camera.w;
     glm::vec4 lRayStart_world  = InverseViewMatrix       * lRayStart_camera; lRayStart_world /=lRayStart_world .w;
     glm::vec4 lRayEnd_camera   = InverseProjectionMatrix * lRayEnd_NDC;      lRayEnd_camera  /=lRayEnd_camera  .w;
@@ -1093,13 +1037,8 @@ void SquircleRenderer::pick_object() {
 
     glm::vec3 lRayDir_world(lRayEnd_world - lRayStart_world);
     lRayDir_world = glm::normalize(lRayDir_world);
-//#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     glm::vec3 out_end = camera->Position+ camera->Orientation*1000.0f;
-//#elif defined(Q_OS_WIN)
-//    glm::vec3 out_end = GLM_D3DX_Helper::ConvertVec3(camera->Position+ camera->Orientation*1000.0f);
-//#endif
-    //dynamicsWorld->updateAabbs();
-    //dynamicsWorld->computeOverlappingPairs();
+
 
     btVector3 from = btVector3(camera->Position.x, camera->Position.y, camera->Position.z);
     btVector3 to = btVector3(out_end.x, out_end.y, out_end.z);
@@ -1116,11 +1055,7 @@ void SquircleRenderer::pick_object() {
         to,
         RayCallback
     );
-    //std::string message;
     if(RayCallback.hasHit()) {
-        //std::ostringstream oss;
-        //std::cout << "mesh " << (long)RayCallback.m_collisionObject->getUserPointer() << std::endl;
-        //message = oss.str();
 
         HexagonObjectPointer* obj = ((HexagonObjectPointer*)RayCallback.m_collisionObject->getUserPointer());
 
@@ -1194,48 +1129,6 @@ void SquircleRenderer::paint()
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-
-
-
-
-/*
-    GLuint vertexbuffer;
-    // Generate 1 buffer, put the resulting identifier in vertexbuffer
-    glGenBuffers(1, &vertexbuffer);
-    // The following commands will talk about our 'vertexbuffer' buffer
-    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    // Give our vertices to OpenGL.
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    glVertexAttribPointer(
-       0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-       3,                  // size
-       GL_FLOAT,           // type
-       GL_FALSE,           // normalized?
-       0,                  // stride
-       (void*)0            // array buffer offset
-    );
-
-    GLuint programID = LoadShaders(":/default/simple.vert", ":/default/simple.frag" );
-
-    glUseProgram(programID);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // Draw the triangle !
-    glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
-    glDisableVertexAttribArray(0);
-
-*/
-
-
-
-
-
-
-
 
 
 
@@ -1318,13 +1211,7 @@ void SquircleRenderer::paint()
 
     for(int i=0 ; i < board_length ; i++) {
         for (int j=0; j< board_length; j++){
-            //if(i==board_length-1 && j==board_length-1) break;
             models_neutral_hexagon[j+i*board_length]->hexagon_model->Draw(*shaderProgram, *camera, hexagon_matrices_meshes[i*board_length+j]);
-            //std::cout << hexagon_matrices_meshes[i*board_length+j][0][0] << " " << hexagon_matrices_meshes[i*board_length+j][1][0] << " " << hexagon_matrices_meshes[i*board_length+j][2][0] << " " << hexagon_matrices_meshes[i*board_length+j][3][0] << " " << std::endl;
-            //std::cout << hexagon_matrices_meshes[i*board_length+j][0][1] << " " << hexagon_matrices_meshes[i*board_length+j][1][1] << " " << hexagon_matrices_meshes[i*board_length+j][2][1] << " " << hexagon_matrices_meshes[i*board_length+j][3][1] << " " << std::endl;
-            //std::cout << hexagon_matrices_meshes[i*board_length+j][0][2] << " " << hexagon_matrices_meshes[i*board_length+j][1][2] << " " << hexagon_matrices_meshes[i*board_length+j][2][2] << " " << hexagon_matrices_meshes[i*board_length+j][3][2] << " " << std::endl;
-            //std::cout << hexagon_matrices_meshes[i*board_length+j][0][3] << " " << hexagon_matrices_meshes[i*board_length+j][1][3] << " " << hexagon_matrices_meshes[i*board_length+j][2][3] << " " << hexagon_matrices_meshes[i*board_length+j][3][3] << " " << std::endl;
-            //std::cout << std::endl;
 
         }
     }
@@ -1335,16 +1222,6 @@ void SquircleRenderer::paint()
     //light.Draw(lightShader, *camera);
 
 
-    //m_program->setUniformValue("t", (float) m_t);
-
-    //glDrawArrays(GL_TRIANGLE_STRIP, 0, 3);
-
-    //m_program->disableAttributeArray(0);
-    //m_program->release();
-
-    // Not strictly needed for this example, but generally useful for when
-    // mixing with raw OpenGL.
-    //m_window->resetOpenGLState();
     shaderProgram->Delete();
     delete shaderProgram;
     m_window->endExternalCommands();

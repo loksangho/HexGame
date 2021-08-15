@@ -2,6 +2,11 @@
 #define SHADERCLASS_H
 #define GL_GLEXT_PROTOTYPES
 
+/*
+ *  This is the shader class for OpenGL implementation of the 3D mode (Mac and Linux).
+ *
+ */
+
 #include "qglobal.h"
 
 #ifdef Q_OS_WIN

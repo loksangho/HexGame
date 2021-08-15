@@ -3,6 +3,11 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+/*
+ *  This is the class that is the main window of the game. It handles the 2D play with AI functionality as well.
+ *
+ */
+
 #include <QMainWindow>
 #include "hexboard.h"
 #include "hexbutton.h"

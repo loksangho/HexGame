@@ -1,5 +1,11 @@
 #ifndef EBO_H
 #define EBO_H
+
+/*
+ *  This is the OpenGL index buffer implementation class.
+ *
+ */
+
 #include "qglobal.h"
 #define GL_GLEXT_PROTOTYPES
 #ifdef Q_OS_WIN

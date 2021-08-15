@@ -3,6 +3,11 @@
 #ifndef MAINONLINEWINDOW_H
 #define MAINONLINEWINDOW_H
 
+/*
+ *  This is class that handles the online aspect of the game.
+ *
+ */
+
 #include <QMainWindow>
 #include <QProgressDialog>
 #include <QItemSelection>

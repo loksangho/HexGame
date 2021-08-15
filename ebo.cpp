@@ -2,6 +2,8 @@
 #include <iostream>
 
 // Constructor that generates a Elements Buffer Object and links it to indices
+
+// The Windows version of OpenGL is legacy code, it's not used anymore
 EBO::EBO(std::vector<GLuint>& indices)
 {
 #ifdef Q_OS_MACX
@@ -10,16 +12,6 @@ EBO::EBO(std::vector<GLuint>& indices)
     glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
 
 #elif defined(Q_OS_WIN)
-
-
-//PFNGLGENBUFFERSARBPROC glGenBuffersARB;
-//glGenBuffersARB = (PFNGLGENBUFFERSARBPROC) wglGetProcAddress("glGenBuffersARB");
-
-//PFNGLBINDBUFFERARBPROC glBindBufferARB;
-//glBindBufferARB = (PFNGLBINDBUFFERARBPROC) wglGetProcAddress("glBindBufferARB");
-
-//PFNGLBUFFERDATAARBPROC glBufferDataARB;
-//glBufferDataARB = (PFNGLBUFFERDATAARBPROC) wglGetProcAddress("glBufferDataARB");
 
 glGenBuffers(1, &ID);
 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
@@ -37,8 +29,6 @@ void EBO::Bind() {
     glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER, ID);
 
 #elif defined(Q_OS_WIN)
-    //PFNGLBINDBUFFERARBPROC glBindBufferARB;
-    //glBindBufferARB = (PFNGLBINDBUFFERARBPROC) wglGetProcAddress("glBindBufferARB");
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
 #elif defined(Q_OS_LINUX)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
@@ -49,8 +39,6 @@ void EBO::Unbind() {
 #ifdef Q_OS_MACX
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 #elif defined(Q_OS_WIN)
-    //PFNGLBINDBUFFERARBPROC glBindBufferARB;
-    //glBindBufferARB = (PFNGLBINDBUFFERARBPROC) wglGetProcAddress("glBindBufferARB");
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 #elif defined(Q_OS_LINUX)
@@ -62,8 +50,6 @@ void EBO::Delete() {
 #ifdef Q_OS_MACX
     glDeleteBuffersARB(1, &ID);
 #elif defined(Q_OS_WIN)
-    //PFNGLDELETEBUFFERSARBPROC glDeleteBuffersARB;
-    //glDeleteBuffersARB = (PFNGLDELETEBUFFERSARBPROC) wglGetProcAddress("glDeleteBuffersARB");
 
     glDeleteBuffers(1, &ID);
 

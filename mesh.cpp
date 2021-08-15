@@ -11,22 +11,12 @@ Mesh::Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::v
     VBO VBO(vertices);
     // Generates Element Buffer Object and links it to indices
     EBO EBO(indices);
-    //EBO.Bind();
+
     // Links VBO attributes such as coordinates and colors to VAO
     VAO1.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
     VAO1.LinkAttrib(VBO, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
     VAO1.LinkAttrib(VBO, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)(9 * sizeof(float)));
     VAO1.LinkAttrib(VBO, 3, 3, GL_FLOAT, sizeof(Vertex), (void*)(6 * sizeof(float)));
-
-
-    //for(Vertex v : vertices){
-    //    std::cout << v.position.x << ", " << v.position.y << ", " << v.position.z << std::endl;
-    //}
-    //VAO.LinkAttrib(VBO, 2, 3, GL_FLOAT, sizeof(Vertex), (void*)(8 * sizeof(float)));
-
-    //for(GLuint i : indices) {
-    //    std::cout << i << std::endl;
-    //}
 
     // Unbind all to prevent accidentally modifying them
     VAO1.Unbind();
@@ -67,7 +57,6 @@ void Mesh::Draw
         std::string type = textures[i].type;
         if (type == "diffuse")
         {
-            //std::cout << "here1" << std::endl;
             num = std::to_string(numDiffuse++);
         }
         else if (type == "specular")
@@ -79,12 +68,6 @@ void Mesh::Draw
     }
     // Take care of the camera Matrix
 #ifdef Q_OS_WIN
-    //PFNGLUNIFORM3FARBPROC glUniform3fARB;
-    //glUniform3fARB = (PFNGLUNIFORM3FARBPROC) wglGetProcAddress("glUniform3fARB");
-
-    //PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
-    //glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC) wglGetProcAddress("glGetUniformLocation");
-
     glUniform3f(glGetUniformLocation(shader.ID, "camPos"), camera.Position.x, camera.Position.y, camera.Position.z);
 #elif defined(Q_OS_MACX)
     glUniform3fARB(glGetUniformLocation(shader.ID, "camPos"), camera.Position.x, camera.Position.y, camera.Position.z);
@@ -108,13 +91,6 @@ void Mesh::Draw
 
 
 #ifdef Q_OS_WIN
-    //PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv;
-    //glUniformMatrix4fv = (PFNGLUNIFORMMATRIX4FVPROC) wglGetProcAddress("glUniformMatrix4fv");
-
-    //PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
-    //glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC) wglGetProcAddress("glGetUniformLocation");
-
-
     glUniformMatrix4fv(glGetUniformLocation(shader.ID, "translation"), 1, GL_FALSE, glm::value_ptr(trans));
     glUniformMatrix4fv(glGetUniformLocation(shader.ID, "rotation"), 1, GL_FALSE, glm::value_ptr(rot));
     glUniformMatrix4fv(glGetUniformLocation(shader.ID, "scale"), 1, GL_FALSE, glm::value_ptr(sca));
@@ -125,13 +101,6 @@ void Mesh::Draw
     glUniformMatrix4fvARB(glGetUniformLocation(shader.ID, "scale"), 1, GL_FALSE, glm::value_ptr(sca));
     glUniformMatrix4fvARB(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(matrix));
 #endif
-    // Push the matrices to the vertex shader
-
-    //std::cout << indices.size() << std::endl;
-    //std::cout << vertices.size() << std::endl;
-    // Draw the actual mesh
-    //std::cout << "here2" << std::endl;
-    //HandleGLError();
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 
 }

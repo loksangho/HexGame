@@ -5,7 +5,6 @@
 
 bool KeyReceiver::eventFilter(QObject* obj, QEvent* event)
 {
-    std::cout << "event filter" << std::endl;
 
     if (event->type()==QEvent::KeyPress) {
         QKeyEvent* key = static_cast<QKeyEvent*>(event);

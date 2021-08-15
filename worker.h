@@ -3,6 +3,12 @@
 #ifndef WORKER_H
 #define WORKER_H
 
+/*
+ *  This is the worker class for the threaded object in the game logic implmentation.
+ *
+ */
+
+
 #include <QThread>
 #include "hexboard.h"
 

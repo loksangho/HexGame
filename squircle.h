@@ -51,6 +51,11 @@
 #ifndef SQUIRCLE_H
 #define SQUIRCLE_H
 
+/*
+ *  This is the main class handling the 3D mode of the game. It is so-named because it is based on the example from the Qt website.
+ *
+ */
+
 #include "qglobal.h"
 
 #ifdef Q_OS_WIN
@@ -187,15 +192,6 @@ public:
     D3D11Shader* d3d11ShaderProgram = nullptr;
     bool m_initialized = false;
 
-    //ID3D11Buffer *m_cbuf = nullptr; //constant
-    //ID3D11Buffer *m_sbuf = nullptr; //sampler
-   // ID3D11Buffer *m_texbuf = nullptr; //texcoords
-
-
-   // ID3D11RasterizerState *m_rastState = nullptr;
-    //ID3D11DepthStencilState *m_dsState = nullptr;
-
-
 #endif
 
 public slots:
@@ -209,11 +205,7 @@ public slots:
     void mainPassRecordingStart();
 #endif
 
-//protected:
-    //bool eventFilter(QObject *obj, QEvent *event);
-
 private:
-    //QSize m_viewportSize;
     qreal m_t;
     QOpenGLShaderProgram *m_program;
     float rotation = 0.0f;
