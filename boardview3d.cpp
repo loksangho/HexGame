@@ -35,7 +35,7 @@ void BoardView3D::init(int board_length, int colour, int difficulty) {
 
     view->setResizeMode(QQuickView::SizeRootObjectToView);
     view->setSource(QUrl("qrc:///scenegraph/openglunderqml/main.qml"));
-    Squircle* squircle = view->rootObject()->findChild<Squircle *>("squircle");
+    squircle = view->rootObject()->findChild<Squircle *>("squircle");
     squircle->init(board_length, colour==0?Colour::BLUE:Colour::RED, difficulty);
     ui->verticalLayout->addWidget(container);
 
@@ -45,7 +45,7 @@ void BoardView3D::init(int board_length, int colour, int difficulty) {
 BoardView3D::~BoardView3D()
 {
     delete ui;
-
+    delete squircle;
 }
 
 // When the '2D Mode' button is clicked, it hides current window and goes back to the main window.
@@ -53,5 +53,17 @@ void BoardView3D::on_pushButton_clicked()
 {
     main_window->setVisible(true);
     this->hide();
+}
+
+
+void BoardView3D::on_mouseSensitivitySlider_valueChanged(int value)
+{
+    squircle->changeMouseSensitivity(value);
+}
+
+
+void BoardView3D::on_moveSpeedSlider_valueChanged(int value)
+{
+    squircle->changeMoveSpeed(value);
 }
 

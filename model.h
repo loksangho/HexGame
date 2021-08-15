@@ -29,7 +29,7 @@ public:
 #endif
 #if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     void Draw(Shader& shader,
-              Camera& camera, glm::mat4 matrices_mesh=glm::mat4(1.0f));
+              Camera& camera, glm::mat4 matrices_mesh=glm::mat4(1.0f), bool pre = true);
 #endif
     // All the meshes and transformations
     std::vector<Mesh> meshes;

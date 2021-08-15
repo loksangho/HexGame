@@ -23,11 +23,15 @@ public:
     void init(int board_length, int colour, int difficulty);
     ~BoardView3D();
     QMainWindow* main_window;
-
+    Squircle* squircle;
 
 
 private slots:
     void on_pushButton_clicked();
+
+    void on_mouseSensitivitySlider_valueChanged(int value);
+
+    void on_moveSpeedSlider_valueChanged(int value);
 
 private:
     Ui::BoardView3D *ui;

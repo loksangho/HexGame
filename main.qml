@@ -52,7 +52,6 @@
 import QtQuick 2.0
 import OpenGLUnderQML 1.0
 
-
 Item {
     id: item
     //width: 320

@@ -53,7 +53,6 @@ void Camera::Delete() {
 // This is required as the cursor is locked in the middle of the window when in play.
 void Camera::Inputs(int screenPosX, int screenPosY, int mouseX, int mouseY, int press_key_esc, int press_key_w, int press_key_a, int press_key_s, int press_key_d, int left_mouse_click)
 {
-
     if(left_mouse_click==1) {
 
         if (firstClick)
@@ -117,7 +116,7 @@ void Camera::Inputs(int screenPosX, int screenPosY, int mouseX, int mouseY, int 
         {
             speed = 0.1f;
         }*/
-            QCursor::setPos(-screenPosX+(width / 2), -screenPosY+(height / 2));
+            //QCursor::setPos(-screenPosX+(width / 2), -screenPosY+(height / 2));
 
             float rotX = sensitivity*(float)(mouseY*1.0 - (height / 2)) / height;
             float rotY = sensitivity*(float)(mouseX*1.0 - (width / 2)) / width;

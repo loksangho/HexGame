@@ -119,6 +119,17 @@ void Squircle::init(int board_length, Colour player_colour, int difficulty) {
 
 }
 
+void Squircle::changeMouseSensitivity(int val) {
+    if(m_renderer && m_renderer->camera) {
+        m_renderer->camera->sensitivity = val;
+    }
+}
+
+void Squircle::changeMoveSpeed(int val) {
+    if(m_renderer && m_renderer->camera) {
+        m_renderer->camera->speed = val/10.0f;
+    }
+}
 
 //! [1]
 void Squircle::handleWindowChanged(QQuickWindow *win)
@@ -268,9 +279,16 @@ SquircleRenderer::~SquircleRenderer()
 {
     //delete m_program;
     //delete m_window;
-    for(int k=0; k< board_length*board_length; k++) {
-        delete models_neutral_hexagon[k];
-    }
+
+#ifdef Q_OS_WIN
+
+    d3d11ShaderProgram->Delete();
+
+    camera->Delete();
+    // Might need more deletions (meshes, textures)
+#endif
+
+
 
     //remove the rigidbodies from the dynamics world and delete them
     for (int i=dynamicsWorld->getNumCollisionObjects()-1; i>=0 ;i--) {
@@ -319,25 +337,14 @@ SquircleRenderer::~SquircleRenderer()
     for (int i=0; i< models_neutral_hexagon.size(); i++) {
         HexagonObjectPointer* pointer = models_neutral_hexagon[i];
         models_neutral_hexagon[i] = 0;
-        delete pointer;
+        if(pointer)
+            delete pointer;
     }
 
 
-#ifdef Q_OS_WIN
-
-    d3d11ShaderProgram->Delete();
-
-
-    camera->Delete();
-
-
-
-    // Might need more deletions (meshes, textures)
-
-
-
-
-#endif
+    for(int k=0; k< board_length*board_length; k++) {
+        delete models_neutral_hexagon[k];
+    }
 
 
 }
@@ -1133,7 +1140,7 @@ void SquircleRenderer::paint()
 
 
     camera->Inputs(this->screenPosX, this->screenPosY, this->mouseX, this->mouseY, this->press_key_esc, this->press_key_w, this->press_key_a, this->press_key_s, this->press_key_d, this->left_mouse_click);
-    camera->updateMatrix(45.0f, 0.1f, 500.0f);
+    camera->updateMatrix(45.0f, 0.1f, 1000.0f);
 
     if(hex_buttons_enabled) {
         pick_object();
@@ -1198,7 +1205,7 @@ void SquircleRenderer::paint()
         rot = glm::mat4_cast(ori);
         sca = glm::scale(sca, glm::vec3(1.0));
 
-        model_ball->Draw(*shaderProgram, *camera, trans*rot*sca);
+        model_ball->Draw(*shaderProgram, *camera, trans*rot*sca, true);
         i++;
         j++;
         //count++;
@@ -1211,7 +1218,7 @@ void SquircleRenderer::paint()
 
     for(int i=0 ; i < board_length ; i++) {
         for (int j=0; j< board_length; j++){
-            models_neutral_hexagon[j+i*board_length]->hexagon_model->Draw(*shaderProgram, *camera, hexagon_matrices_meshes[i*board_length+j]);
+            models_neutral_hexagon[j+i*board_length]->hexagon_model->Draw(*shaderProgram, *camera, hexagon_matrices_meshes[i*board_length+j], false);
 
         }
     }

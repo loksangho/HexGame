@@ -248,7 +248,8 @@ public:
     void set_enable_buttons(bool b);
     bool hex_buttons_enabled = false;
     bool inPlayWindow = false;
-
+    void changeMouseSensitivity(int val);
+    void changeMoveSpeed(int val);
 
 signals:
     void tChanged();

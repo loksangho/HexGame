@@ -53,7 +53,7 @@ public:
 
     // Adjust the speed of the camera and it's sensitivity when looking around
     float speed = 0.7f;
-    float sensitivity = 100.0f;
+    float sensitivity = 5.0f;
 
 
     // Camera constructor to set up initial values

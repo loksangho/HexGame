@@ -261,14 +261,18 @@ void Model::DrawD3D11(D3D11Shader* shader,Camera& camera, glm::mat4 matrices_mes
 }
 #endif
 #if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
-void Model::Draw(Shader& shader,Camera& camera, glm::mat4 matrices_mesh)
+void Model::Draw(Shader& shader,Camera& camera, glm::mat4 matrices_mesh, bool pre)
 {
 
     // Go over all meshes and draw each one
     for (unsigned long i = 0; i < meshes.size(); i++)
     {             
-        meshes[i].Mesh::Draw(shader, camera, matricesMeshes[i]*matrices_mesh);
-
+        if(pre) {
+            meshes[i].Mesh::Draw(shader, camera, matrices_mesh * matricesMeshes[i]);
+        }
+        else {
+            meshes[i].Mesh::Draw(shader, camera, matricesMeshes[i]*matrices_mesh);
+        }
     }
 #if defined(Q_OS_MACX) || defined(Q_OS_UNIX)
     std::vector<Vertex> vertices;
