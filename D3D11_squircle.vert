@@ -1,13 +1,30 @@
-cbuffer MatrixBuffer
+cbuffer MatrixBuffer : register(cb0)
 {
-    matrix camMatrix;
-    matrix translation;
-    matrix rotation;
-    matrix scale;
-    matrix model;
+    float4x4 mvpMatrix;
 };
 
+/*
+cbuffer TranslationBuffer : register(cb1)
+{
+    matrix translation;
+};
 
+cbuffer RotationBuffer : register(cb2)
+{
+    matrix rotation;
+};
+
+cbuffer ScaleBuffer : register(cb3)
+{
+    matrix scale;
+
+};
+
+cbuffer ModelBuffer : register(cb1)
+{
+    matrix model;
+};
+*/
 
 struct SPIRV_Cross_Input
 {
@@ -15,31 +32,22 @@ struct SPIRV_Cross_Input
     float3 normal : NORMAL;
     float3 color : COLOR;
     float2 tex : TEXCOORD0;
-
-
 };
 
 struct SPIRV_Cross_Output
 {
-    float4 position : SV_Position;
+    float4 position : SV_POSITION;
     float3 normal : NORMAL;
     float3 color: COLOR;
     float2 tex : TEXCOORD0;
 };
 
-//void vert_main()
-//{
-//    position = vertices;
-//    coords = vertices.xy;
-//}
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
 {
-    float4 crntPos = mul(model*translation*rotation*scale,float4(stage_input.position.x, stage_input.position.y, stage_input.position.z, 1.0f));
-    crntPos.w = 1;
-    //vert_main();
+    float4 crntPos = mul(float4(stage_input.position, 1.0f), mvpMatrix);
     SPIRV_Cross_Output stage_output;
-    stage_output.position = mul(camMatrix, crntPos);
+    stage_output.position = crntPos;
     stage_output.tex = stage_input.tex;
     stage_output.color = stage_input.color;
     stage_output.normal = stage_input.normal;

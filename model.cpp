@@ -97,7 +97,11 @@ Model::Model(D3D11Shader* shader, const char* file)
             //std::cout << mesh->mName.C_Str() << std::endl;
             while(current_node != NULL) {
                 //std::cout << n << std::endl;
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
                 globalMat = current_node->mTransformation * globalMat;
+#elif defined(Q_OS_WIN)
+                globalMat = current_node->mTransformation * globalMat;
+#endif
                 current_node = current_node->mParent;
                 n++;
             }
@@ -211,10 +215,19 @@ Model::Model(D3D11Shader* shader, const char* file)
                 for(unsigned int j=0; j<mesh->mNumVertices; j++) {
                     //std::cout << positions[j].x << ", " << positions[j].y << ", " << positions[j].z << std::endl;
                     Vertex cur_vertex = Vertex {
+//#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
+
                             glm::vec3((float)positions[j].x , (float)positions[j].y, (float)positions[j].z),
                             glm::vec3((float)normals[j].x, (float)normals[j].y, (float)normals[j].z),
                             colours!=nullptr?glm::vec3(colours[j].r, colours[j].g, colours[j].b):glm::vec3(1.0,1.0,1.0),
                             glm::vec2((float)texCoords[j].x, (float)texCoords[j].y)
+/*#elif defined(Q_OS_WIN)
+                            GLM_D3DX_Helper::ConvertVec3(glm::vec3((float)positions[j].x , (float)positions[j].y, (float)positions[j].z)),
+                            GLM_D3DX_Helper::ConvertVec3(glm::vec3((float)normals[j].x, (float)normals[j].y, (float)normals[j].z)),
+                            colours!=nullptr?GLM_D3DX_Helper::ConvertVec3(glm::vec3(colours[j].r, colours[j].g, colours[j].b)):D3DXVECTOR3(1.0,1.0,1.0),
+                            GLM_D3DX_Helper::ConvertVec2(glm::vec2((float)texCoords[j].x, (float)texCoords[j].y))
+
+#endif*/
                         };
 
 
@@ -255,12 +268,17 @@ Model::Model(D3D11Shader* shader, const char* file)
 
                 glm::mat4 matNextNode = matrix_mesh;// * glm::mat4(1.0f) * glm::mat4(1.0f) * glm::scale(glm::mat4(1.0f), glm::vec3(1.0,1.0,1.0));
                 //glm::mat4 matNextNode (1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0);
+//#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
                 matricesMeshes.push_back(matNextNode);
-
-
                 translationsMeshes.push_back(glm::vec3(0.0,0.0,0.0));
                 rotationsMeshes.push_back(glm::quat(1.0,0.0,0.0,0.0));
                 scalesMeshes.push_back(glm::vec3(1.0,1.0,1.0));
+/*#elif defined(Q_OS_WIN)
+                matricesMeshes.push_back(GLM_D3DX_Helper::ConvertMatrix(matNextNode));
+                translationsMeshes.push_back(GLM_D3DX_Helper::ConvertVec3(glm::vec3(0.0,0.0,0.0)));
+                rotationsMeshes.push_back(D3DXQUATERNION(0.0,0.0,0.0,1.0));
+                scalesMeshes.push_back(GLM_D3DX_Helper::ConvertVec3(glm::vec3(1.0,1.0,1.0)));
+#endif*/
 
 #if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
                 meshes.push_back(cur_mesh);
@@ -284,16 +302,20 @@ Model::Model(D3D11Shader* shader, const char* file)
 }
 
 #if defined(Q_OS_WIN)
-void Model::DrawD3D11(D3D11Shader* shader,Camera& camera, glm::mat4 matrices_mesh)
+void Model::DrawD3D11(D3D11Shader* shader,Camera& camera, glm::mat4 matrices_mesh, bool pre)
 {
     // Go over all meshes and draw each one
     for (unsigned long i = 0; i < d3d11_meshes.size(); i++)
     {
-        d3d11_meshes[i].D3D11Mesh::Draw(shader, camera, matricesMeshes[i]*matrices_mesh);
-
+        if(pre) {
+            d3d11_meshes[i].D3D11Mesh::Draw(shader, camera, matrices_mesh*matricesMeshes[i]);
+        }
+        else {
+            d3d11_meshes[i].D3D11Mesh::Draw(shader, camera, matricesMeshes[i]*matrices_mesh);
+        }
     }
 
-    std::vector<Vertex> vertices;
+/*    std::vector<Vertex> vertices;
 
     std::vector<unsigned int> indices;
     //For some reason it doesn't draw the last mesh, so I do it manually
@@ -311,10 +333,11 @@ void Model::DrawD3D11(D3D11Shader* shader,Camera& camera, glm::mat4 matrices_mes
     }
     D3D11Mesh last_mesh(shader, vertices,indices, d3d11_meshes[lastIndex].textures);
     last_mesh.Draw(shader, camera, matricesMeshes[lastIndex]*matrices_mesh);
+*/
 
 }
 #endif
-
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
 void Model::Draw(Shader& shader,Camera& camera, glm::mat4 matrices_mesh)
 {
 
@@ -345,5 +368,5 @@ void Model::Draw(Shader& shader,Camera& camera, glm::mat4 matrices_mesh)
     last_mesh.Draw(shader, camera, matricesMeshes[lastIndex]*matrices_mesh);
 #endif
 }
-
+#endif
 

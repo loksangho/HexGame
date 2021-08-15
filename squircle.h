@@ -170,6 +170,7 @@ public:
     HexagonObjectPointer* currently_hovering = nullptr;
     bool winner_declared = false;
     bool can_throw = true;
+    QSize mouse_viewportSize;
 
 #ifdef Q_OS_WIN
     struct TargaHeader

@@ -10,7 +10,7 @@
     #include <d3d11.h>
     #include <d3dcompiler.h>
     #include "d3d11shaderclass.h"
-    #include "Vertex.h"
+    #include "vertex.h"
 #elif defined(Q_OS_MACX) || defined(Q_OS_LINUX)
     #include<QtGui/QOpenGLFunctions>
 #endif
@@ -22,20 +22,29 @@
 #include<glm/gtc/type_ptr.hpp>
 #include<glm/gtx/rotate_vector.hpp>
 #include<glm/gtx/vector_angle.hpp>
-
 #include "shaderClass.h"
 
 class Camera
 {
 public:
     // Stores the main vectors of the camera
+//#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     glm::vec3 Position;
     glm::vec3 Orientation = glm::vec3(0.0f, 0.0f, -1.0f);
     glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
     glm::mat4 cameraMatrix = glm::mat4(1.0f);
-    float FOVdeg = 45.0f;
     glm::mat4 view;
     glm::mat4 projection;
+/*#elif defined(Q_OS_WIN)
+    D3DXVECTOR3 Position;
+    D3DXVECTOR3 Orientation = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
+    D3DXVECTOR3 Up = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+    D3DXMATRIX cameraMatrix;
+    D3DXMATRIX view;
+    D3DXMATRIX projection;*/
+//#endif
+    float FOVdeg = 45.0f;
+
     // Prevents the camera from jumping around when first clicking left click
     bool firstClick = true;
 

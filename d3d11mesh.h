@@ -7,6 +7,7 @@
 #include "camera.h"
 #include <glm/glm.hpp>
 
+
 class D3D11Mesh
 {
 public:
@@ -16,7 +17,12 @@ public:
     std::vector <D3D11Texture> textures;
     // Store VAO in public so it can be used in the Draw function
 
-    ID3D11Buffer* m_cbuf = 0;
+    ID3D11Buffer* m_transbuf = 0;
+    ID3D11Buffer* m_rotbuf = 0;
+
+    ID3D11Buffer* m_scabuf = 0;
+    ID3D11Buffer* m_modelbuf = 0;
+
     ID3D11Buffer* m_vbuf = 0; //vertex
     ID3D11Buffer* m_indbuf = 0; //index
     ID3D11InputLayout *m_inputLayout = 0;

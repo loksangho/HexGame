@@ -29,11 +29,13 @@ public:
     QByteArray m_fragEntryPoint;
     QByteArray vs;
     QByteArray fs;
-    ID3D11VertexShader *m_vs = 0;
-    ID3D11PixelShader *m_ps = 0;
+    ID3D11VertexShader *m_vs = nullptr;
+    ID3D11PixelShader *m_ps = nullptr;
     ID3D11Device *m_device = nullptr;
     ID3D11DeviceContext *m_context = nullptr;
-    ID3D11BlendState *m_blendState = 0;
+    ID3D11BlendState *m_blendState = nullptr;
+    ID3D11RasterizerState *m_rastState = nullptr;
+    ID3D11DepthStencilState *m_dsState = nullptr;
 
     D3D11Shader(const char* vertexFile, const char* fragmentFile, ID3D11Device *m_device, ID3D11DeviceContext *m_context);
 

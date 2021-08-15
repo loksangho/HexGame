@@ -1,7 +1,7 @@
 #ifndef HEXBOARDMANAGER_H
 #define HEXBOARDMANAGER_H
 #include "hexbutton.h"
-#include "Colour.h"
+#include "colour.h"
 #include "mywidget.h"
 #include "hexboard.h"
 

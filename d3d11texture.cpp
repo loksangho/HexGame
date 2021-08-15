@@ -11,7 +11,7 @@ D3D11Texture::D3D11Texture(D3D11Shader* shader, const char* image, const char* t
     int heightImg = img.height();
     int widthImg = img.width();
     img = img.mirrored();
-
+    img = img.convertToFormat(QImage::Format_RGBA8888_Premultiplied);
 
     D3D11_TEXTURE2D_DESC tDesc;
     ZeroMemory(&tDesc, sizeof(tDesc));
@@ -37,7 +37,7 @@ D3D11Texture::D3D11Texture(D3D11Shader* shader, const char* image, const char* t
 
     D3D11_SHADER_RESOURCE_VIEW_DESC pDesc;
     ZeroMemory(&pDesc, sizeof(pDesc));
-    pDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // same as tDesc
+    pDesc.Format = tDesc.Format; // same as tDesc
     pDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
     pDesc.Texture2D.MostDetailedMip = 0;
     pDesc.Texture2D.MipLevels = -1;
@@ -71,7 +71,7 @@ D3D11Texture::D3D11Texture(D3D11Shader* shader, const char* image, const char* t
 
 void D3D11Texture::texUnit(D3D11Shader* shader, const char* uniform)
 {
-    shader->Activate();
+    //shader->Activate();
 }
 
 void D3D11Texture::Bind(D3D11Shader* shader)

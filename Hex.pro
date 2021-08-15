@@ -49,10 +49,9 @@ SOURCES += \
     workflowmanager.cpp
 
 HEADERS += \
-    Colour.h \
-    Vertex.h \
     boardview3d.h \
     camera.h \
+    colour.h \
     connection_metadata.h \
     customdialog.h \
     d3d11mesh.h \
@@ -77,6 +76,7 @@ HEADERS += \
     texture.h \
     vao.h \
     vbo.h \
+    vertex.h \
     vertex.h \
     websocket_endpoint.h \
     worker.h \

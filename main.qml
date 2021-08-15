@@ -55,8 +55,8 @@ import OpenGLUnderQML 1.0
 
 Item {
     id: item
-    width: 320
-    height: 480
+    //width: 320
+    //height: 480
 
 
 
@@ -85,8 +85,8 @@ Item {
         id: squircle
         objectName: "squircle"
         SequentialAnimation on t {
-            NumberAnimation { to: 1; duration: 2500; easing.type: Easing.InQuad }
-            NumberAnimation { to: 0; duration: 2500; easing.type: Easing.OutQuad }
+            NumberAnimation { to: 1; duration: 2500;  }
+            NumberAnimation { to: 0; duration: 2500;  }
             loops: Animation.Infinite
             running: true
         }
@@ -98,9 +98,6 @@ Item {
         id: mouseArea
         anchors.fill: parent
         hoverEnabled: true
-
-
     }
-    //Component.onCompleted: Squircle.listenTo(items)
 }
 //! [2]

@@ -107,10 +107,12 @@ void D3D11Shader::compileShader()
 }
 
 void D3D11Shader::mainPass() {
-    m_context->VSSetShader(m_vs, nullptr, 0); // this needs to be run every pass, while createvertexshader only runs once
+    m_context->VSSetShader(m_vs, nullptr, 0);
     m_context->PSSetShader(m_ps, nullptr, 0);
+    m_context->OMSetDepthStencilState(m_dsState, 0);
     float blendConstants[] = { 1, 1, 1, 1 };
     m_context->OMSetBlendState(m_blendState, blendConstants, 0xFFFFFFFF);
+    m_context->RSSetState(m_rastState);
 
 }
 
@@ -133,19 +135,39 @@ void D3D11Shader::Activate()
     blendDesc.IndependentBlendEnable = true;
     D3D11_RENDER_TARGET_BLEND_DESC blend;
     memset(&blend, 0, sizeof(blend));
-    blend.BlendEnable = true;
+    blend.BlendEnable = false;
     blend.SrcBlend = D3D11_BLEND_SRC_ALPHA;
     blend.DestBlend = D3D11_BLEND_ONE;
     blend.BlendOp = D3D11_BLEND_OP_ADD;
-    blend.SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
+    /*blend.SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
     blend.DestBlendAlpha = D3D11_BLEND_ONE;
-    blend.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    blend.BlendOpAlpha = D3D11_BLEND_OP_ADD;*/
     blend.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
     blendDesc.RenderTarget[0] = blend;
     hr = m_device->CreateBlendState(&blendDesc, &m_blendState);
     if (FAILED(hr))
         qFatal("Failed to create blend state: 0x%x", hr);
 
+    D3D11_RASTERIZER_DESC rastDesc;
+    memset(&rastDesc, 0, sizeof(rastDesc));
+    rastDesc.FillMode = D3D11_FILL_SOLID;
+    rastDesc.CullMode = D3D11_CULL_NONE;
+    //rastDesc.FrontCounterClockwise = true;
+    hr = m_device->CreateRasterizerState(&rastDesc, &m_rastState);
+    if (FAILED(hr))
+        qFatal("Failed to create rasterizer state: 0x%x", hr);
+
+
+    D3D11_DEPTH_STENCIL_DESC dsDesc;
+    memset(&dsDesc, 0, sizeof(dsDesc));
+    dsDesc.DepthEnable = true;
+    dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+    dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
+    //dsDesc.StencilEnable= false;
+
+    hr = m_device->CreateDepthStencilState(&dsDesc, &m_dsState);
+    if (FAILED(hr))
+        qFatal("Failed to create depth/stencil state: 0x%x", hr);
 
 
 }
@@ -163,6 +185,10 @@ void D3D11Shader::Delete()
     if (m_blendState)
         m_blendState->Release();
 
+    if(m_dsState)
+        m_dsState->Release();
 
+    if(m_rastState)
+        m_rastState->Release();
 }
 #endif

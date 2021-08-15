@@ -6,43 +6,67 @@ Camera::Camera(int width, int height, glm::vec3 position)
 {
     Camera::width = width;
     Camera::height = height;
+//#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     Position = position;
+/*#elif defined(Q_OS_WIN)
+    Position = GLM_D3DX_Helper::ConvertVec3(position);
+#endif*/
 }
 
 void Camera::updateMatrix(float FOVdeg, float nearPlane, float farPlane)
 {
     // Initializes matrices since otherwise they will be the null matrix
-    view = glm::mat4(1.0f);
-    projection = glm::mat4(1.0f);
+
 
     this->FOVdeg = FOVdeg;
 
+//#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
+    view = glm::mat4(1.0f);
+    projection = glm::mat4(1.0f);
     // Makes camera look in the right direction from the right position
     view = glm::lookAt(Position, Position + Orientation, Up);
 
     // Adds perspective to the scene
-    projection = glm::perspective(glm::radians(FOVdeg),(float)width/height, nearPlane, farPlane);
+    projection = glm::perspective(FOVdeg,(float)width/height, nearPlane, farPlane);
 
     // Sets new camera matrix
+//#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     cameraMatrix = projection * view;
+//#elif defined(Q_OS_WIN)
+//    cameraMatrix = projection * view;
+//#endif;
+/*#elif defined(Q_OS_WIN)
+    D3DXMatrixIdentity(&view);
+    D3DXMatrixIdentity(&projection);
+    // Makes camera look in the right direction from the right position
+    D3DXVECTOR3 At = Position + Orientation;
+    D3DXMatrixLookAtLH(&view, &Position, &At, &Up);
+
+    float aspect = (float) width/height;
+    D3DXMatrixPerspectiveFovLH(&projection, D3DXToRadian(FOVdeg), aspect, nearPlane, farPlane);
+    //view = glm::lookAt(Position, Position + Orientation, Up);
+    //D3DXMATRIX transposed_proj;
+    //D3DXMATRIX transposed_view;
+    //D3DXMatrixTranspose(&transposed_proj, &projection);
+    //D3DXMatrixTranspose(&transposed_view, &view);
+    cameraMatrix = view * projection;
+
+
+    // Adds perspective to the scene
+    //projection = glm::perspectiveZO(FOVdeg,(float)width/height, nearPlane, farPlane);
+    //projection = glm::translate(glm::vec3(0.0f,0.0f,0.5f)) * glm::scale(glm::vec3(1.0f,1.0f,0.5f)) * projection; // fix when translating from opengl to directx
+    // Sets new camera matrix
+    //cameraMatrix = glm::transpose(projection) * glm::transpose(view);*/
+//#endif
 }
 
 void Camera::Matrix(Shader& shader, const char* uniform)
 {
 #ifdef Q_OS_WIN
-    //PFNGLGETUNIFORMLOCATIONARBPROC glGetUniformLocationARB;
-    //glGetUniformLocationARB = (PFNGLGETUNIFORMLOCATIONARBPROC) wglGetProcAddress("glGetUniformLocationARB");
 
-    //PFNGLUNIFORMMATRIX4FVARBPROC glUniformMatrix4fvARB;
-    //glUniformMatrix4fvARB = (PFNGLUNIFORMMATRIX4FVARBPROC) wglGetProcAddress("glUniformMatrix4fvARB");
-
-    // Exports camera matrix
-    glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
 #elif defined(Q_OS_MAC) || defined (Q_OS_LINUX)
     glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
 #endif
-
-
 
 }
 
@@ -65,25 +89,36 @@ void Camera::Init(D3D11Shader* shader) {
 
 void Camera::MatrixD3D11(D3D11Shader* shader) {
 
-/*
-    D3D11_MAPPED_SUBRESOURCE mappedResource;
-    //glm::mat4* dataPtr;
-    unsigned int bufferNumber;
-    glm::mat4 camMatrix = glm::transpose(cameraMatrix);
-    HRESULT hr = shader->m_context->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+
+ /*   //This might have to go to constructor
+    D3D11_BUFFER_DESC cbufDesc;
+    ZeroMemory(&cbufDesc, sizeof(cbufDesc));
+    cbufDesc.Usage = D3D11_USAGE_DYNAMIC;
+    cbufDesc.ByteWidth = sizeof(CamMatrixBufferType);
+    cbufDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    cbufDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    cbufDesc.MiscFlags = 0;
+    cbufDesc.StructureByteStride = 0;
+
+    CamMatrixBufferType camBuf;
+    camBuf.camMatrix = cameraMatrix;
+
+    D3D11_SUBRESOURCE_DATA InitData;
+    InitData.pSysMem = &camBuf;
+    InitData.SysMemPitch = 0;
+    InitData.SysMemSlicePitch = 0;
+    HRESULT hr = shader->m_device->CreateBuffer(&cbufDesc, &InitData, &m_matrixBuffer);
     if (FAILED(hr))
-        qFatal("Failed to map matrix buffer: 0x%x", hr);
+        qFatal("Failed to create constant buffer: 0x%x", hr);
+    shader->m_context->UpdateSubresource(m_matrixBuffer, 0 , 0, &camBuf, 0, 0);
 
+    unsigned int bufferNumber;
 
-    memcpy(mappedResource.pData, &camMatrix, sizeof(glm::mat4));
-
-    shader->m_context->Unmap(m_matrixBuffer, 0);
-
-    bufferNumber = 5;
+    bufferNumber = 0;
 
     shader->m_context->VSSetConstantBuffers(bufferNumber, 1, &m_matrixBuffer);
-
 */
+
 
 }
 
@@ -117,7 +152,15 @@ void Camera::Inputs(int screenPosX, int screenPosY, int mouseX, int mouseY, int 
         }
 
         if(press_key_a == 1) {
+//#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
             Position += (1.f * speed) * -glm::normalize(glm::cross(Orientation, Up));
+/*#elif defined(Q_OS_WIN)
+            D3DXVECTOR3 cross_result;
+            D3DXVec3Cross(&cross_result, &Orientation, &Up);
+            D3DXVECTOR3 normalize_result;
+            D3DXVec3Normalize(&normalize_result, &cross_result);
+            Position += (1.f * speed) * -normalize_result;
+#endif*/
         }
 
         if(press_key_s == 1) {
@@ -125,7 +168,15 @@ void Camera::Inputs(int screenPosX, int screenPosY, int mouseX, int mouseY, int 
         }
 
         if(press_key_d == 1) {
-            Position += (1.f* speed) * glm::normalize(glm::cross(Orientation, Up));
+//#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
+            Position += (1.f * speed) * glm::normalize(glm::cross(Orientation, Up));
+/*#elif defined(Q_OS_WIN)
+            D3DXVECTOR3 cross_result;
+            D3DXVec3Cross(&cross_result, &Orientation, &Up);
+            D3DXVECTOR3 normalize_result;
+            D3DXVec3Normalize(&normalize_result, &cross_result);
+            Position += (1.f * speed) * normalize_result;
+#endif*/
         }
 
      /*   if (QGuiApplication::queryKeyboardModifiers().testFlag(Qt::Key_W))
@@ -160,47 +211,17 @@ void Camera::Inputs(int screenPosX, int screenPosY, int mouseX, int mouseY, int 
         {
             speed = 0.1f;
         }*/
+            //std::cout << width << "," << height << std::endl;
+            //QCursor::setPos(width/2, height/2);
+            QCursor::setPos(-screenPosX+(width / 2), -screenPosY+(height / 2));
 
-        //std::cout << Position.x << "," << Position.y << "," << Position.z << std::endl;
-        //Position += speed * -Orientation;
-    /*
-        // Handles mouse inputs
-        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-        {
-            // Hides mouse cursor
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-
-            // Prevents camera from jumping on the first click
-            if (firstClick)
-            {
-                glfwSetCursorPos(window, (width / 2), (height / 2));
-                firstClick = false;
-            }
-    */
-
-            //QCursor::setPos(-screenPosX+(width / 2), -screenPosY+(height / 2));
-
-            // Stores the coordinates of the cursor
-            //double mouseX;
-            //double mouseY;
-            // Fetches the coordinates of the cursor
-            //glfwGetCursorPos(window, &mouseX, &mouseY);
-
-            //Orientation = glm::vec3(0.0f, 0.0f, -1.0f);
-            // Normalizes and shifts the coordinates of the cursor such that they begin in the middle of the screen
-            // and then "transforms" them into degrees
-            //float rotX = sensitivity * (float)(mouseY*1.0 - (height / 2)) / height;
-            //float rotY = sensitivity * (float)(mouseX*1.0 - (width / 2)) / width;
-
-            //QCursor::setPos(-screenPosX+(width / 2), -screenPosY+(height / 2));
+            //QCursor::setPos(100,100);
             float rotX = sensitivity*(float)(mouseY*1.0 - (height / 2)) / height;
             float rotY = sensitivity*(float)(mouseX*1.0 - (width / 2)) / width;
 
-            //std::cout << std::max(width/2-abs(mouseX-width/2)/width,0) << std::endl;
-            //std::cout << mouseX - wid << std::endl;
 
-            //std::cout << mouseX << "," << mouseY << std::endl;
-            // Calculates upcoming vertical change in the Orientation
+
+//#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
             glm::vec3 newOrientation = glm::rotate(Orientation, glm::radians(-rotX), glm::normalize(glm::cross(Orientation, Up)));
 
             if (abs(glm::angle(newOrientation, Up) - glm::radians(90.0f)) <= glm::radians(85.0f))
@@ -210,6 +231,27 @@ void Camera::Inputs(int screenPosX, int screenPosY, int mouseX, int mouseY, int 
 
             // Rotates the Orientation left and right
             Orientation = glm::rotate(Orientation, glm::radians(-rotY), Up);
+/*#elif defined(Q_OS_WIN)
+            D3DXVECTOR3 cross_result;
+            D3DXVec3Cross(&cross_result, &Orientation, &Up);
+            D3DXVECTOR3 normalize_result;
+            D3DXVec3Normalize(&normalize_result, &cross_result);
+            D3DXMATRIX rotate_mat;
+            D3DXMatrixRotationAxis(&rotate_mat, &normalize_result, D3DXToRadian(-rotX));
+            D3DXVECTOR3 newOrientation;
+            D3DXVec3TransformCoord(&newOrientation,  &Orientation, &rotate_mat);
+            // need a way to  find the angle between two vectors, D3DX does not provide such a function
+            glm::vec3 newOrientationGLM = glm::vec3(newOrientation.x, newOrientation.y, newOrientation.z);
+            glm::vec3 UpGLM = glm::vec3(Up.x, Up.y, Up.z);
+
+            if (abs(glm::angle(newOrientationGLM, UpGLM) - D3DXToRadian(90.0f)) <= D3DXToRadian(85.0f))
+            {
+                Orientation = newOrientation;
+            }
+            D3DXMatrixRotationAxis(&rotate_mat, &Up, D3DXToRadian(-rotY));
+            D3DXVec3TransformCoord(&Orientation,  &Orientation, &rotate_mat);
+
+#endif*/
         }
 
         else {

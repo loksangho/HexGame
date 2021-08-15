@@ -4,7 +4,7 @@
 #define NODE_H
 
 
-#include "Colour.h"
+#include "colour.h"
 
 class Node {
     public:

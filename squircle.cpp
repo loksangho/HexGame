@@ -78,13 +78,12 @@
 #include <QMessageBox>
 #include <QTimer>
 #include <QOpenGLContext>
+#include <QQuickRenderTarget>
 
 
 
-
-
-unsigned int width = 800;
-unsigned int height = 800;
+unsigned int width;
+unsigned int height;
 
 
 //! [7]
@@ -364,7 +363,9 @@ void Squircle::sync()
     }
 
 
+
     m_viewportSize = window()->size() * window()->devicePixelRatio();
+    m_renderer->mouse_viewportSize = window()->size();
 
     m_renderer->setViewportSize(window()->size() * window()->devicePixelRatio());
     m_renderer->setT(m_t);
@@ -381,6 +382,7 @@ void Squircle::sync()
     m_renderer->mouseY = point.y();
     mouseX = point.x();
     mouseY = point.y();
+
 
     this->fps_title = m_renderer->fps_title;
 
@@ -416,15 +418,16 @@ void SquircleRenderer::frameStart()
         model_neutral_hexagon = new Model(d3d11ShaderProgram,":/models/hexagon3D/hexagon3D_blender.dae");
         model_red_hexagon = new Model(d3d11ShaderProgram,":/models/hexagon3D/hexagon3D_blender_red.dae");
         model_blue_hexagon = new Model(d3d11ShaderProgram,":/models/hexagon3D/hexagon3D_blender_blue.dae");
-    }
 
+    }
 
     init();
 
 
 
-    if (!m_initialized)
+    if (!m_initialized) {
         D3D11Init();
+    }
 
 
 
@@ -436,25 +439,10 @@ void SquircleRenderer::mainPassRecordingStart()
 {
 
     m_window->beginExternalCommands();
-
-    /*D3D11_MAPPED_SUBRESOURCE mp;
-    // will copy the entire constant buffer every time -> pass WRITE_DISCARD -> prevent pipeline stalls
-    HRESULT hr = m_context->Map(m_cbuf, 0, D3D11_MAP_WRITE_DISCARD, 0, &mp);
-    if (SUCCEEDED(hr)) {
-        float t = m_t;
-        memcpy(mp.pData, &t, 4);
-        m_context->Unmap(m_cbuf, 0);
-    } else {
-        qFatal("Failed to map constant buffer: 0x%x", hr);
-    }*/
-
+    m_window->setColor(QColor(125,125,125,255));
 
     camera->Inputs(this->screenPosX, this->screenPosY, this->mouseX, this->mouseY, this->press_key_esc, this->press_key_w, this->press_key_a, this->press_key_s, this->press_key_d, this->left_mouse_click);
-    camera->updateMatrix(45.0f, 0.1f, 1000.0f);
-
-
-    //camera update matrix here
-    camera->MatrixD3D11(d3d11ShaderProgram);
+    camera->updateMatrix(45.0f, 0.1f, 10000.0f);
 
 
     D3D11_VIEWPORT v;
@@ -500,12 +488,6 @@ void SquircleRenderer::mainPassRecordingStart()
             movingRigidBodiesAge.erase(j);
             dynamicsWorld->removeRigidBody(body);
 
-
-            //delete body->getCollisionShape();
-
-            //delete body;
-
-            //count++;
             continue;
         }
         else {
@@ -532,21 +514,27 @@ void SquircleRenderer::mainPassRecordingStart()
         rot = glm::mat4_cast(ori);
         sca = glm::scale(sca, glm::vec3(1.0));
 
-        model_ball->DrawD3D11(d3d11ShaderProgram, *camera, trans*rot*sca);
+        model_ball->DrawD3D11(d3d11ShaderProgram, *camera, sca*rot*trans, true);
         i++;
         j++;
         //count++;
 
     }
+
     model_table->DrawD3D11(d3d11ShaderProgram, *camera);
+
     model->DrawD3D11(d3d11ShaderProgram, *camera);       // robot model
     model_red_blocks->DrawD3D11(d3d11ShaderProgram, *camera); // the two red blocks beside the board
     model_blue_blocks->DrawD3D11(d3d11ShaderProgram, *camera); // the two blue blocks beside the board
 
+
     for(int i=0 ; i < board_length ; i++) {
         for (int j=0; j< board_length; j++){
             //if(i==board_length-1 && j==board_length-1) break;
-            models_neutral_hexagon[j+i*board_length]->hexagon_model->DrawD3D11(d3d11ShaderProgram, *camera, hexagon_matrices_meshes[i*board_length+j]);
+            Model* hexagon_model = models_neutral_hexagon[j+i*board_length]->hexagon_model;
+            glm::mat4 matrices = hexagon_matrices_meshes[i*board_length+j];
+            hexagon_model->DrawD3D11(d3d11ShaderProgram, *camera, matrices, false);
+
             //std::cout << hexagon_matrices_meshes[i*board_length+j][0][0] << " " << hexagon_matrices_meshes[i*board_length+j][1][0] << " " << hexagon_matrices_meshes[i*board_length+j][2][0] << " " << hexagon_matrices_meshes[i*board_length+j][3][0] << " " << std::endl;
             //std::cout << hexagon_matrices_meshes[i*board_length+j][0][1] << " " << hexagon_matrices_meshes[i*board_length+j][1][1] << " " << hexagon_matrices_meshes[i*board_length+j][2][1] << " " << hexagon_matrices_meshes[i*board_length+j][3][1] << " " << std::endl;
             //std::cout << hexagon_matrices_meshes[i*board_length+j][0][2] << " " << hexagon_matrices_meshes[i*board_length+j][1][2] << " " << hexagon_matrices_meshes[i*board_length+j][2][2] << " " << hexagon_matrices_meshes[i*board_length+j][3][2] << " " << std::endl;
@@ -556,15 +544,6 @@ void SquircleRenderer::mainPassRecordingStart()
         }
     }
 
-
-
-
-
-    //m_context->PSSetConstantBuffers(0, 1, &m_cbuf);
-    //Bind textures here
-    //texture->Bind(d3d11ShaderProgram);
-    //m_context->Draw(4, 0);
-   // m_context->DrawIndexed(3,0,0);
 
     m_window->endExternalCommands();
 
@@ -683,7 +662,12 @@ void SquircleRenderer::trigger_mouse_click_action() {
     }
     else if(can_throw && !winner_declared && aiplay->turn != player_colour) { // if the user is waiting for the computer, allow the user to shoot balls from the eye view
         //Shoot spheres
+
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
         btSphereShape* ballShape = new btSphereShape(glm::length(model_ball->meshes[0].vertices[0].position)); //Calculate the radius of the ball model and plugs it into the sphere shape. Model should be centered around the origin for this to work.
+#elif defined(Q_OS_WIN)
+        btSphereShape* ballShape = new btSphereShape(glm::length(model_ball->d3d11_meshes[0].vertices[0].position)); //Calculate the radius of the ball model and plugs it into the sphere shape. Model should be centered around the origin for this to work.
+#endif
 
         btDefaultMotionState* motionstate = new btDefaultMotionState(btTransform(
             btQuaternion::getIdentity(),
@@ -729,7 +713,6 @@ bool Squircle::eventFilter(QObject *obj, QEvent *event)
         QPoint pos = QCursor::pos();
         QWidget *widget = QApplication::widgetAt(pos);
         if (widget != NULL){
-            std::cout << std::string(widget->metaObject()->className()) << std::endl;
             if(std::string(widget->metaObject()->className()).compare("QWindowContainer") == 0) {
                 m_renderer->left_mouse_click = 1;
 
@@ -751,7 +734,6 @@ bool Squircle::eventFilter(QObject *obj, QEvent *event)
             QPoint pos = QCursor::pos();
             QWidget *widget = QApplication::widgetAt(pos);
             if (widget != NULL){
-                std::cout << std::string(widget->metaObject()->className()) << std::endl;
                 if(std::string(widget->metaObject()->className()).compare("QWindowContainer") == 0) {
                     m_renderer->left_mouse_click = -1;
                     event->accept();
@@ -761,8 +743,6 @@ bool Squircle::eventFilter(QObject *obj, QEvent *event)
                     return false;
                 }
             }
-
-
         }
 
     }
@@ -816,20 +796,6 @@ void SquircleRenderer::D3D11Init() {
 */
 
 
-        /*D3D11_RASTERIZER_DESC rastDesc;
-        memset(&rastDesc, 0, sizeof(rastDesc));
-        rastDesc.FillMode = D3D11_FILL_SOLID;
-        rastDesc.CullMode = D3D11_CULL_NONE;
-        hr = m_device->CreateRasterizerState(&rastDesc, &m_rastState);
-        if (FAILED(hr))
-            qFatal("Failed to create rasterizer state: 0x%x", hr);
-
-        D3D11_DEPTH_STENCIL_DESC dsDesc;
-        memset(&dsDesc, 0, sizeof(dsDesc));
-        hr = m_device->CreateDepthStencilState(&dsDesc, &m_dsState);
-        if (FAILED(hr))
-            qFatal("Failed to create depth/stencil state: 0x%x", hr);
-*/
 
 
 
@@ -842,14 +808,24 @@ void SquircleRenderer::init()
 
 #if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
         initializeOpenGLFunctions();
+        //width = m_viewportSize.width();
+        //height = m_viewportSize.height();
 #endif
+//#elif defined(Q_OS_WIN)
+    //Not sure why I have to do this
+    width = mouse_viewportSize.width();
+    height = mouse_viewportSize.height();
 
-        width = m_viewportSize.width();
-        height = m_viewportSize.height();
+
+
 
         if(camera == nullptr) {
             camera = new Camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
+//#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
             camera->Position = glm::vec3(0,15,20);
+//#elif defined(Q_OS_WIN)
+//            camera->Position = D3DXVECTOR3(0,15,20);
+//#endif
 
             float scale_offset=0.3f;
             float x_offset = -1.8f;
@@ -937,15 +913,21 @@ void SquircleRenderer::init()
                 sca = glm::scale(sca, scale);
 
 
-
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
                 hexagon_matrices_meshes.push_back(trans * rot * sca);
+#elif defined(Q_OS_WIN)
+                hexagon_matrices_meshes.push_back(trans * rot * sca);
+#endif
 
 
                 //Translate position by internal matrix for mesh
-
+ #if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
                 glm::vec4 new_tmp_trans = model_neutral_hexagon->matricesMeshes[0] * glm::vec4(position_x, position_y, position_z, 1.0);
                 glm::vec3 new_trans = glm::vec3(new_tmp_trans.x, new_tmp_trans.y, new_tmp_trans.z);
-
+ #elif defined(Q_OS_WIN)
+                glm::vec4 new_tmp_trans = model_neutral_hexagon->matricesMeshes[0] * glm::vec4(position_x, position_y, position_z, 1.0);
+                glm::vec3 new_trans = glm::vec3(new_tmp_trans.x, new_tmp_trans.y, new_tmp_trans.z);
+#endif
 
             //for(int j=0; j< 5; j++) {
                 btConvexHullShape* convexHullCollisionShape = new btConvexHullShape();
@@ -1039,19 +1021,6 @@ void SquircleRenderer::init()
         shaderProgram->Activate();
 #endif
 
-#ifdef Q_OS_WIN
-
-        //PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
-        //glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC) wglGetProcAddress("glGetUniformLocation");
-
-        //PFNGLUNIFORM4FPROC glUniform4f;
-        //glUniform4f = (PFNGLUNIFORM4FPROC) wglGetProcAddress("glUniform4f");
-
-        //PFNGLUNIFORM3FPROC glUniform3f;
-        //glUniform3f = (PFNGLUNIFORM3FPROC) wglGetProcAddress("glUniform3f");
-
-#endif
-
 #if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
         glUniform4f(glGetUniformLocation(shaderProgram->ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
         glUniform3f(glGetUniformLocation(shaderProgram->ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
@@ -1093,13 +1062,25 @@ void SquircleRenderer::pick_object() {
 
     // The Projection matrix goes from Camera Space to NDC.
     // So inverse(ProjectionMatrix) goes from NDC to Camera Space.
-
+//#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     glm::mat4 InverseProjectionMatrix = glm::inverse(camera->projection);
+/*#elif defined(Q_OS_WIN)
+    D3DXMATRIX InverseProjectMatrixD3DX;
+    D3DXMATRIX CameraProjection = camera->projection;
+    float determinant;
+    D3DXMatrixInverse(&InverseProjectMatrixD3DX, &determinant, &CameraProjection);
+    glm::mat4 InverseProjectionMatrix = GLM_D3DX_Helper::ConvertMatrix(InverseProjectMatrixD3DX);
+
+#endif*/
+
 
     // The View Matrix goes from World Space to Camera Space.
     // So inverse(ViewMatrix) goes from Camera Space to World Space.
+//#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     glm::mat4 InverseViewMatrix = glm::inverse(camera->view);
-
+//#elif defined(Q_OS_WIN)
+//    glm::mat4 InverseViewMatrix = glm::inverse(GLM_D3DX_Helper::ConvertMatrix(camera->view));
+//#endif
     glm::vec4 lRayStart_camera = InverseProjectionMatrix * lRayStart_NDC;    lRayStart_camera/=lRayStart_camera.w;
     glm::vec4 lRayStart_world  = InverseViewMatrix       * lRayStart_camera; lRayStart_world /=lRayStart_world .w;
     glm::vec4 lRayEnd_camera   = InverseProjectionMatrix * lRayEnd_NDC;      lRayEnd_camera  /=lRayEnd_camera  .w;
@@ -1112,9 +1093,11 @@ void SquircleRenderer::pick_object() {
 
     glm::vec3 lRayDir_world(lRayEnd_world - lRayStart_world);
     lRayDir_world = glm::normalize(lRayDir_world);
-
+//#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     glm::vec3 out_end = camera->Position+ camera->Orientation*1000.0f;
-
+//#elif defined(Q_OS_WIN)
+//    glm::vec3 out_end = GLM_D3DX_Helper::ConvertVec3(camera->Position+ camera->Orientation*1000.0f);
+//#endif
     //dynamicsWorld->updateAabbs();
     //dynamicsWorld->computeOverlappingPairs();
 
