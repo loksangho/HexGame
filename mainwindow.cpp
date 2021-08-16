@@ -13,11 +13,11 @@
 #include <QSurfaceFormat>
 
 
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
       ui(new Ui::MainWindow())
 {
+
 
         ui->setupUi(this);
         createHexagonalButtons(length,50,100,100);
@@ -31,7 +31,7 @@ void MainWindow::setup_object() {
 
 MainWindow::~MainWindow()
 {
-    destroy_thread_manager();
+    //destroy_thread_manager();
     delete ui;
 
 }
@@ -49,7 +49,6 @@ void MainWindow::setupStyleSheet() {
 
 
 void MainWindow::createHexagonalButtons(int length, int size, int x_offset, int y_offset) {
-
     double length_of_hexagon_side = (size*sin(30*M_PI/180))/sin(120*M_PI/180);
     double move_up = sqrt(pow(length_of_hexagon_side,2)-pow(size/2,2));
     double move_right = size/2;
@@ -196,9 +195,9 @@ void MainWindow::set_move() {
 
 void MainWindow::set_colour_turn(Colour c) {
     if(c == Colour::BLUE)
-        centralWidget()->setStyleSheet("HexButton:hover{border-image:url(\":/images/hexagon_blue.png\");}");
+        setStyleSheet("HexButton:hover{border-image:url(\":/images/hexagon_blue.png\");}");
     else {
-        centralWidget()->setStyleSheet("HexButton:hover{border-image:url(\":/images/hexagon_red.png\");}");
+        setStyleSheet("HexButton:hover{border-image:url(\":/images/hexagon_red.png\");}");
     }
 }
 
@@ -212,6 +211,7 @@ void MainWindow::setup_thread_manager() {
     connect(this, &MainWindow::operate, worker, &Worker::doWork);
     connect(worker, &Worker::resultReady, this, &MainWindow::handleResults);
     workerThread.start();
+    std::cout << "thread started" << std::endl;
 
 }
 
@@ -260,16 +260,16 @@ void MainWindow::handleResults(const QString &str) {
     }
 }
 
-
+// Play Online Button
 void MainWindow::on_pushButton_clicked()
 {
     MainOnlineWindow* online_window = new MainOnlineWindow();
     this->close();
     online_window->show();
-
+    destroy_thread_manager();
 }
 
-
+// 3D Mode button
 void MainWindow::on_pushButton_2_clicked()
 {
 
@@ -293,6 +293,7 @@ void MainWindow::on_pushButton_2_clicked()
         this->setVisible(false);
         board_3d->init(11, colour, difficulty);
         board_3d->show();
+        destroy_thread_manager();
     }
 
 }

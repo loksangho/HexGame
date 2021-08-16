@@ -2,6 +2,7 @@
 #include "keyreceiver.h"
 #include <QGuiApplication>
 
+
 Camera::Camera(int width, int height, glm::vec3 position)
 {
     Camera::width = width;
@@ -57,12 +58,25 @@ void Camera::Inputs(int screenPosX, int screenPosY, int mouseX, int mouseY, int 
 
         if (firstClick)
         {
-           QGuiApplication::setOverrideCursor(Qt::CrossCursor);
+            rubber_band_horizontal = new QRubberBand(QRubberBand::Rectangle);
+            rubber_band_horizontal->setGeometry(-screenPosX+(width / 2)-10, -screenPosY+(height / 2)-1, 20, 2);
+            rubber_band_vertical = new QRubberBand(QRubberBand::Rectangle);
+            rubber_band_vertical->setGeometry(-screenPosX+(width / 2)-1, -screenPosY+(height / 2)-10, 2, 20);
+            //rubber_band->move(-screenPosX+(width / 2), -screenPosY+(height / 2));
+            rubber_band_horizontal->show();
+            rubber_band_vertical->show();
+           QGuiApplication::setOverrideCursor(Qt::BlankCursor);
            firstClick = false;
         }
     }
     if(press_key_esc==1) {
         firstClick = true;
+        if(rubber_band_horizontal)
+            delete rubber_band_horizontal;
+        if(rubber_band_vertical)
+            delete rubber_band_vertical;
+        rubber_band_horizontal = 0;
+        rubber_band_vertical = 0;
     }
     if(!firstClick){
     // Handles key inputs
@@ -116,7 +130,15 @@ void Camera::Inputs(int screenPosX, int screenPosY, int mouseX, int mouseY, int 
         {
             speed = 0.1f;
         }*/
+//#if defined(Q_OS_WIN) || defined(Q_OS_MAC)
+        if(mouseX < 0 || mouseX > width) {
+            QCursor::setPos(-screenPosX+(width / 2), -screenPosY + mouseY);
+        }
+        if(mouseY < 0 || mouseY > height) {
+            QCursor::setPos(-screenPosX + mouseX, -screenPosY+(height / 2));
+        }
             //QCursor::setPos(-screenPosX+(width / 2), -screenPosY+(height / 2));
+//#endif
 
             float rotX = sensitivity*(float)(mouseY*1.0 - (height / 2)) / height;
             float rotY = sensitivity*(float)(mouseX*1.0 - (width / 2)) / width;

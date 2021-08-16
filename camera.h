@@ -30,6 +30,7 @@
 #include<glm/gtx/rotate_vector.hpp>
 #include<glm/gtx/vector_angle.hpp>
 #include "shaderClass.h"
+#include <QRubberBand>
 
 class Camera
 {
@@ -54,6 +55,8 @@ public:
     // Adjust the speed of the camera and it's sensitivity when looking around
     float speed = 0.7f;
     float sensitivity = 5.0f;
+    QRubberBand* rubber_band_horizontal;
+    QRubberBand* rubber_band_vertical;
 
 
     // Camera constructor to set up initial values

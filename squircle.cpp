@@ -381,7 +381,6 @@ void Squircle::sync()
     m_renderer->board_length = this->board_length;
     QPointF point =  this->mapFromGlobal(QCursor::pos());
 
-
     m_renderer->screenPosX = this->mapFromGlobal(this->position()).toPoint().x();
     m_renderer->screenPosY = this->mapFromGlobal(this->position()).toPoint().y();
 
