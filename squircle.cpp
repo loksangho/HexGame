@@ -376,6 +376,7 @@ void Squircle::sync()
         m_renderer->hex_buttons_enabled = this->hex_buttons_enabled;
         m_renderer->player_colour = this->player_colour;
         m_renderer->aiplay = this->aiplay;
+
     }
 
 
@@ -562,6 +563,9 @@ void Squircle::keyPressEvent(QKeyEvent *event) {
     }
     else if(event->key() == Qt::Key_Escape) {
         m_renderer->press_key_esc = 1;
+        inPlayWindow = false; // this variable indicates whether the user has gone into the play window or not (cursor becomes cross hair and is centered on the screen when inside)
+        m_renderer->rubber_band_horizontal->hide();
+        m_renderer->rubber_band_vertical->hide();
         event->accept();
 
     }
@@ -591,10 +595,7 @@ void Squircle::keyReleaseEvent(QKeyEvent *event) {
     }
     else if(event->key() == Qt::Key_Escape) {
         m_renderer->press_key_esc = -1;
-        inPlayWindow = false; // this variable indicates whether the user has gone into the play window or not (cursor becomes cross hair and is centered on the screen when inside)
 
-        m_renderer->rubber_band_horizontal->hide();
-        m_renderer->rubber_band_vertical->hide();
         event->accept();
 
     }
@@ -602,7 +603,6 @@ void Squircle::keyReleaseEvent(QKeyEvent *event) {
 
 
 void SquircleRenderer::trigger_mouse_click_action() {
-
     rubber_band_horizontal->setGeometry(QRect(-screenPosX+(width / 2)-10, -screenPosY+(height / 2)-1, 20, 2));
     rubber_band_horizontal->show();
     rubber_band_vertical->setGeometry(-screenPosX+(width / 2)-1, -screenPosY+(height / 2)-10, 2, 20);
@@ -711,6 +711,7 @@ bool Squircle::eventFilter(QObject *obj, QEvent *event)
                 m_renderer->trigger_mouse_click_action();
 
                 inPlayWindow = true;
+                //forceActiveFocus();
 
                 event->accept();
                 return true;
@@ -741,8 +742,8 @@ bool Squircle::eventFilter(QObject *obj, QEvent *event)
     }
     else if(event->type() == QEvent::MouseMove) {
         if(inPlayWindow) {
-            event->accept();
-            return true;
+            //event->accept();
+            //return true;
         }
     }
 

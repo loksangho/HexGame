@@ -125,15 +125,15 @@ void Camera::Inputs(int screenPosX, int screenPosY, int mouseX, int mouseY, int 
         {
             speed = 0.1f;
         }*/
-//#if defined(Q_OS_WIN) || defined(Q_OS_MAC)
-        if(mouseX < 0 || mouseX > width) {
+#if defined(Q_OS_WIN) || defined(Q_OS_MAC)
+        if(mouseX < width/2-5 || mouseX > width/2 +5 ) {
             QCursor::setPos(-screenPosX+(width / 2), -screenPosY + mouseY);
         }
-        if(mouseY < 0 || mouseY > height) {
+        if(mouseY < height/2-5 || mouseY > height/2+5) {
            QCursor::setPos(-screenPosX + mouseX, -screenPosY+(height / 2));
         }
             //QCursor::setPos(-screenPosX+(width / 2), -screenPosY+(height / 2));
-//#endif
+#endif
 
             float rotX = sensitivity*(float)(mouseY*1.0 - (height / 2)) / height;
             float rotY = sensitivity*(float)(mouseX*1.0 - (width / 2)) / width;

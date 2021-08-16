@@ -100,7 +100,7 @@ void MainWindow::on_HexagonalButton_clicked(int val) {
 
 
 
-        std::cout << *board << std::endl;
+        //std::cout << *board << std::endl;
         Colour winner = board->has_winner(false);
         if(winner != Colour::EMPTY) {
 
@@ -211,7 +211,7 @@ void MainWindow::setup_thread_manager() {
     connect(this, &MainWindow::operate, worker, &Worker::doWork);
     connect(worker, &Worker::resultReady, this, &MainWindow::handleResults);
     workerThread.start();
-    std::cout << "thread started" << std::endl;
+    //std::cout << "thread started" << std::endl;
 
 }
 
@@ -252,7 +252,7 @@ void MainWindow::handleResults(const QString &str) {
         set_enable_buttons(false);
     }
     else {
-        std::cout << *board << std::endl;
+        //std::cout << *board << std::endl;
         set_enable_buttons(true);
         if(ui)
             ui->lineEdit->setText("Player's turn.");

@@ -16,7 +16,7 @@
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>700</x>
+     <x>430</x>
      <y>1030</y>
      <width>221</width>
      <height>81</height>
@@ -27,6 +27,9 @@
      <family>Copperplate</family>
      <pointsize>28</pointsize>
     </font>
+   </property>
+   <property name="focusPolicy">
+    <enum>Qt::NoFocus</enum>
    </property>
    <property name="text">
     <string>2D Mode</string>
@@ -51,6 +54,9 @@
      <width>160</width>
      <height>16</height>
     </rect>
+   </property>
+   <property name="focusPolicy">
+    <enum>Qt::NoFocus</enum>
    </property>
    <property name="minimum">
     <number>1</number>
@@ -115,6 +121,9 @@
      <width>160</width>
      <height>16</height>
     </rect>
+   </property>
+   <property name="focusPolicy">
+    <enum>Qt::NoFocus</enum>
    </property>
    <property name="minimum">
     <number>1</number>

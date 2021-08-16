@@ -31,7 +31,7 @@ void BoardView3D::init(int board_length, int colour, int difficulty) {
 #endif
     QQuickView* view = new QQuickView();
     QWidget* container = QWidget::createWindowContainer(view, this);
-    container->setFocusPolicy(Qt::TabFocus);
+    container->setFocusPolicy(Qt::ClickFocus);
 
     view->setResizeMode(QQuickView::SizeRootObjectToView);
     view->setSource(QUrl("qrc:///scenegraph/openglunderqml/main.qml"));
