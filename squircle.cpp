@@ -631,6 +631,7 @@ void SquircleRenderer::trigger_mouse_click_action() {
         for (HexagonObjectPointer* obj : models_neutral_hexagon) {
             obj->hexagon_model = model_neutral_hexagon;
         }
+        prev_hex_colour = nullptr;
         winner_declared = false;
         aiplay->start_game();
         aiplay->set_move();

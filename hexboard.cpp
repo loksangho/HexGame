@@ -125,21 +125,31 @@ bool HexBoard::contains(QVector<int>vec, int x) {
 }
 
 QVector<Node>::iterator HexBoard::contains_id(QVector<Node>& vec, int x) {
-    for(auto it=vec.begin(); it!=vec.end(); it++) {
+    return std::find_if(vec.begin(), vec.end(), [x](Node& n){
+        return n.get_id() == x;
+    });
+
+/*    for(auto it=vec.begin(); it!=vec.end(); it++) {
         if((*it).get_id() == x) {
             return it;
         }
     }
     return vec.end();
+*/
 }
 
+
 QVector<Node>::iterator HexBoard::contains_value(QVector<Node>& vec, int val) {
-    for(auto it=vec.begin(); it!=vec.end(); it++) {
+    return std::find_if(vec.begin(), vec.end(), [val](Node& n){
+        return n.get_value() == val;
+    });
+/*    for(auto it=vec.begin(); it!=vec.end(); it++) {
         if((*it).get_value() == val) {
             return it;
         }
     }
     return vec.end();
+*/
 }
 
 void HexBoard::check_node(QVector<Node>& unvisited,int x){
