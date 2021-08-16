@@ -55,9 +55,8 @@ public:
     // Adjust the speed of the camera and it's sensitivity when looking around
     float speed = 0.7f;
     float sensitivity = 5.0f;
-    QRubberBand* rubber_band_horizontal;
-    QRubberBand* rubber_band_vertical;
 
+    ~Camera();
 
     // Camera constructor to set up initial values
     Camera(int width, int height, glm::vec3 position);

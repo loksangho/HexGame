@@ -176,6 +176,8 @@ public:
     bool winner_declared = false;
     bool can_throw = true;
     QSize mouse_viewportSize;
+    QRubberBand* rubber_band_horizontal = nullptr;
+    QRubberBand* rubber_band_vertical = nullptr;
 
 #ifdef Q_OS_WIN
     struct TargaHeader

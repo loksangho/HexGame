@@ -9,6 +9,7 @@ Camera::Camera(int width, int height, glm::vec3 position)
     Camera::height = height;
     Position = position;
 
+
 }
 
 void Camera::updateMatrix(float FOVdeg, float nearPlane, float farPlane)
@@ -50,6 +51,10 @@ void Camera::Delete() {
 
 #endif
 
+Camera::~Camera() {
+
+}
+
 // Runs at every pass. When player clicks on the 3D window, the variable 'firstClick' is activated the tracks cursor movement. When Escape key is pressed, it exists the mode.
 // This is required as the cursor is locked in the middle of the window when in play.
 void Camera::Inputs(int screenPosX, int screenPosY, int mouseX, int mouseY, int press_key_esc, int press_key_w, int press_key_a, int press_key_s, int press_key_d, int left_mouse_click)
@@ -58,27 +63,17 @@ void Camera::Inputs(int screenPosX, int screenPosY, int mouseX, int mouseY, int 
 
         if (firstClick)
         {
-            rubber_band_horizontal = new QRubberBand(QRubberBand::Rectangle);
-            rubber_band_horizontal->setGeometry(-screenPosX+(width / 2)-10, -screenPosY+(height / 2)-1, 20, 2);
-            rubber_band_vertical = new QRubberBand(QRubberBand::Rectangle);
-            rubber_band_vertical->setGeometry(-screenPosX+(width / 2)-1, -screenPosY+(height / 2)-10, 2, 20);
-            //rubber_band->move(-screenPosX+(width / 2), -screenPosY+(height / 2));
-            rubber_band_horizontal->show();
-            rubber_band_vertical->show();
+
            QGuiApplication::setOverrideCursor(Qt::BlankCursor);
+
            firstClick = false;
         }
     }
     if(press_key_esc==1) {
         firstClick = true;
-        if(rubber_band_horizontal)
-            delete rubber_band_horizontal;
-        if(rubber_band_vertical)
-            delete rubber_band_vertical;
-        rubber_band_horizontal = 0;
-        rubber_band_vertical = 0;
     }
     if(!firstClick){
+
     // Handles key inputs
         if(press_key_w == 1) {
             Position += speed * Orientation;
@@ -135,7 +130,7 @@ void Camera::Inputs(int screenPosX, int screenPosY, int mouseX, int mouseY, int 
             QCursor::setPos(-screenPosX+(width / 2), -screenPosY + mouseY);
         }
         if(mouseY < 0 || mouseY > height) {
-            QCursor::setPos(-screenPosX + mouseX, -screenPosY+(height / 2));
+           QCursor::setPos(-screenPosX + mouseX, -screenPosY+(height / 2));
         }
             //QCursor::setPos(-screenPosX+(width / 2), -screenPosY+(height / 2));
 //#endif

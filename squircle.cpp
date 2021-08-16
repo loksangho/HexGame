@@ -190,6 +190,8 @@ SquircleRenderer::SquircleRenderer(): m_t(0), m_program(0) {
     model_red_hexagon = new Model(":/models/hexagon3D/hexagon3D_blender_red.dae");
     model_blue_hexagon = new Model(":/models/hexagon3D/hexagon3D_blender_blue.dae");
 #endif
+    rubber_band_horizontal = new QRubberBand(QRubberBand::Rectangle);
+    rubber_band_vertical = new QRubberBand(QRubberBand::Rectangle);
 }
 
 AIPlay::AIPlay(Squircle* squircle, Colour player_colour, int difficulty)
@@ -279,6 +281,13 @@ SquircleRenderer::~SquircleRenderer()
 {
     //delete m_program;
     //delete m_window;
+
+    if(rubber_band_horizontal)
+        delete rubber_band_horizontal;
+    if(rubber_band_vertical)
+        delete rubber_band_vertical;
+    rubber_band_horizontal = 0;
+    rubber_band_vertical = 0;
 
 #ifdef Q_OS_WIN
 
@@ -583,6 +592,9 @@ void Squircle::keyReleaseEvent(QKeyEvent *event) {
     else if(event->key() == Qt::Key_Escape) {
         m_renderer->press_key_esc = -1;
         inPlayWindow = false; // this variable indicates whether the user has gone into the play window or not (cursor becomes cross hair and is centered on the screen when inside)
+
+        m_renderer->rubber_band_horizontal->hide();
+        m_renderer->rubber_band_vertical->hide();
         event->accept();
 
     }
@@ -590,6 +602,12 @@ void Squircle::keyReleaseEvent(QKeyEvent *event) {
 
 
 void SquircleRenderer::trigger_mouse_click_action() {
+
+    rubber_band_horizontal->setGeometry(QRect(-screenPosX+(width / 2)-10, -screenPosY+(height / 2)-1, 20, 2));
+    rubber_band_horizontal->show();
+    rubber_band_vertical->setGeometry(-screenPosX+(width / 2)-1, -screenPosY+(height / 2)-10, 2, 20);
+    rubber_band_vertical->show();
+
     if(!winner_declared && aiplay->turn == player_colour && currently_hovering != nullptr) { // if it is the player's turn to move, perform these actions
         int index = currently_hovering->index;
         if(aiplay->board->is_legal(index%board_length, index/board_length, player_colour)) {
