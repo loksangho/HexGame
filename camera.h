@@ -46,7 +46,6 @@ public:
     float FOVdeg = 45.0f;
 
     // Prevents the camera from jumping around when first clicking left click
-    bool firstClick = true;
 
     // Stores the width and height of the window
     int width;
@@ -55,6 +54,9 @@ public:
     // Adjust the speed of the camera and it's sensitivity when looking around
     float speed = 0.7f;
     float sensitivity = 5.0f;
+
+    QRubberBand* rubber_band_horizontal = nullptr;
+    QRubberBand* rubber_band_vertical = nullptr;
 
     ~Camera();
 
@@ -72,6 +74,10 @@ public:
 #endif
     // Handles camera inputs
     void Inputs(int screenPosX, int screenPosY, int mouseX, int mouseY, int press_key_esc, int press_key_w, int press_key_a, int press_key_s, int press_key_d, int left_mouse_click);
+
+private:
+    bool firstClick = true;
+
 };
 
 #endif

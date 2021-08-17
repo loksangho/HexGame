@@ -80,10 +80,9 @@
 #include <QOpenGLContext>
 #include <QQuickRenderTarget>
 #include <QPen>
+#include <QQuickView>
 
 
-unsigned int width;
-unsigned int height;
 
 
 //! [7]
@@ -190,8 +189,7 @@ SquircleRenderer::SquircleRenderer(): m_t(0), m_program(0) {
     model_red_hexagon = new Model(":/models/hexagon3D/hexagon3D_blender_red.dae");
     model_blue_hexagon = new Model(":/models/hexagon3D/hexagon3D_blender_blue.dae");
 #endif
-    rubber_band_horizontal = new QRubberBand(QRubberBand::Rectangle);
-    rubber_band_vertical = new QRubberBand(QRubberBand::Rectangle);
+
 }
 
 AIPlay::AIPlay(Squircle* squircle, Colour player_colour, int difficulty)
@@ -282,12 +280,7 @@ SquircleRenderer::~SquircleRenderer()
     //delete m_program;
     //delete m_window;
 
-    if(rubber_band_horizontal)
-        delete rubber_band_horizontal;
-    if(rubber_band_vertical)
-        delete rubber_band_vertical;
-    rubber_band_horizontal = 0;
-    rubber_band_vertical = 0;
+
 
 #ifdef Q_OS_WIN
 
@@ -380,7 +373,6 @@ void Squircle::sync()
     }
 
 
-
     m_viewportSize = window()->size() * window()->devicePixelRatio();
     m_renderer->mouse_viewportSize = window()->size();
 
@@ -398,6 +390,7 @@ void Squircle::sync()
     m_renderer->mouseY = point.y();
     mouseX = point.x();
     mouseY = point.y();
+
 
 
     this->fps_title = m_renderer->fps_title;
@@ -563,9 +556,12 @@ void Squircle::keyPressEvent(QKeyEvent *event) {
     }
     else if(event->key() == Qt::Key_Escape) {
         m_renderer->press_key_esc = 1;
+
+//#if defined(Q_OS_LINUX)
+        //m_renderer->camera->rubber_band_horizontal->hide();
+        //m_renderer->camera->rubber_band_vertical->hide();
+//#endif
         inPlayWindow = false; // this variable indicates whether the user has gone into the play window or not (cursor becomes cross hair and is centered on the screen when inside)
-        m_renderer->rubber_band_horizontal->hide();
-        m_renderer->rubber_band_vertical->hide();
         event->accept();
 
     }
@@ -603,10 +599,7 @@ void Squircle::keyReleaseEvent(QKeyEvent *event) {
 
 
 void SquircleRenderer::trigger_mouse_click_action() {
-    rubber_band_horizontal->setGeometry(QRect(-screenPosX+(width / 2)-10, -screenPosY+(height / 2)-1, 20, 2));
-    rubber_band_horizontal->show();
-    rubber_band_vertical->setGeometry(-screenPosX+(width / 2)-1, -screenPosY+(height / 2)-10, 2, 20);
-    rubber_band_vertical->show();
+
 
     if(!winner_declared && aiplay->turn == player_colour && currently_hovering != nullptr) { // if it is the player's turn to move, perform these actions
         int index = currently_hovering->index;
@@ -704,15 +697,36 @@ bool Squircle::eventFilter(QObject *obj, QEvent *event)
     {
         QPoint pos = QCursor::pos();
         QWidget *widget = QApplication::widgetAt(pos);
-        if (widget != NULL){
-            if(std::string(widget->metaObject()->className()).compare("QWindowContainer") == 0) {
+        bool pos_on_rubberband=false;
+        //if(m_renderer->camera->rubber_band_horizontal->geometry().contains(pos) || m_renderer->camera->rubber_band_vertical->geometry().contains(pos)){
+        //    pos_on_rubberband = true;
+        //}
+
+
+        if (pos_on_rubberband || widget != NULL){
+            if(pos_on_rubberband || std::string(widget->metaObject()->className()).compare("QWindowContainer") == 0) {
                 m_renderer->left_mouse_click = 1;
 
                 m_renderer->trigger_mouse_click_action();
 
-                inPlayWindow = true;
-                //forceActiveFocus();
 
+//#if defined(Q_OS_LINUX)
+                /*m_renderer->camera->rubber_band_horizontal->setGeometry(QRect(-m_renderer->screenPosX+(m_renderer->width / 2)-10, -m_renderer->screenPosY+(m_renderer->height / 2)-1, 20, 2));
+                if(m_renderer->camera->rubber_band_horizontal->isHidden()) {
+                    m_renderer->camera->rubber_band_horizontal->show();
+
+                }
+
+                m_renderer->camera->rubber_band_vertical->setGeometry(-m_renderer->screenPosX+(m_renderer->width / 2)-1, -m_renderer->screenPosY+(m_renderer->height / 2)-10, 2, 20);
+
+                if(m_renderer->camera->rubber_band_vertical->isHidden()) {
+                   m_renderer->camera->rubber_band_vertical->show();
+                }*/
+
+
+//#endif
+
+                inPlayWindow = true;
                 event->accept();
                 return true;
             }
@@ -726,10 +740,16 @@ bool Squircle::eventFilter(QObject *obj, QEvent *event)
 
         if(m_renderer){
             QPoint pos = QCursor::pos();
+            bool pos_on_rubberband=false;
+            //if(m_renderer->camera->rubber_band_horizontal->geometry().contains(pos) || m_renderer->camera->rubber_band_vertical->geometry().contains(pos)){
+            //    pos_on_rubberband = true;
+            //}
+
             QWidget *widget = QApplication::widgetAt(pos);
-            if (widget != NULL){
-                if(std::string(widget->metaObject()->className()).compare("QWindowContainer") == 0) {
+            if (pos_on_rubberband || widget != NULL){
+                if(pos_on_rubberband || std::string(widget->metaObject()->className()).compare("QWindowContainer") == 0) {
                     m_renderer->left_mouse_click = -1;
+
                     event->accept();
                     return true;
                 }
@@ -741,10 +761,10 @@ bool Squircle::eventFilter(QObject *obj, QEvent *event)
 
     }
     else if(event->type() == QEvent::MouseMove) {
-        if(inPlayWindow) {
+        //if(inPlayWindow) {
             //event->accept();
             //return true;
-        }
+        //}
     }
 
     // Other event type checks here...

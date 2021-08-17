@@ -38,6 +38,7 @@ SOURCES += \
     mywidget.cpp \
     node.cpp \
     onlinegameboardwindow.cpp \
+    overlaywidgetclass.cpp \
     shaderClass.cpp \
     squircle.cpp \
     stb.cpp \
@@ -70,6 +71,7 @@ HEADERS += \
     mywidget.h \
     onlinegameboardwindow.h \
     node.h \
+    overlaywidgetclass.h \
     shaderClass.h \
     squircle.h \
     stb_image.h \
@@ -110,7 +112,9 @@ macx {
     _BOOST_PATH = /usr/local/Cellar/boost/1.76.0
     _ASSIMP_PATH = /usr/local/Cellar/assimp/5.0.1
     _BULLET_PATH = /usr/local/Cellar/bullet/3.17
+    _OPENVDB_PATH = /usr/local/Cellar/openvdb/8.1.0
     INCLUDEPATH += "$${_BOOST_PATH}/include/"
+    INCLUDEPATH += "$${_OPENVDB_PATH}/include/"
     INCLUDEPATH += "./websocketpp/"
     INCLUDEPATH += "./glm/"
     INCLUDEPATH += "./json/"
@@ -120,8 +124,9 @@ macx {
     LIBS += -L$${_BOOST_PATH}/lib
     LIBS += -L$${_ASSIMP_PATH}/lib
     LIBS += -L$${_BULLET_PATH}/lib
+    LIBS += -L$${_OPENVDB_PATH}/lib
     LIBS += -L/usr/local/opt/openssl/lib
-    LIBS += -lboost_system -lssl -lcrypto -lcurl -lassimp -lBulletDynamics -lBulletCollision -lBulletSoftBody -lLinearMath
+    LIBS += -lboost_system -lssl -lcrypto -lcurl -lassimp -lBulletDynamics -lBulletCollision -lBulletSoftBody -lLinearMath -lopenvdb
     LIBS += -lz -lc++ -lSystem.B
 
 }

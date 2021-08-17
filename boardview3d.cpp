@@ -30,14 +30,18 @@ void BoardView3D::init(int board_length, int colour, int difficulty) {
     QQuickWindow::setGraphicsApi(QSGRendererInterface::Direct3D11Rhi);
 #endif
     QQuickView* view = new QQuickView();
+    //base = new ContainerWidget();
+
+
     QWidget* container = QWidget::createWindowContainer(view, this);
-    container->setFocusPolicy(Qt::ClickFocus);
 
     view->setResizeMode(QQuickView::SizeRootObjectToView);
     view->setSource(QUrl("qrc:///scenegraph/openglunderqml/main.qml"));
     squircle = view->rootObject()->findChild<Squircle *>("squircle");
     squircle->init(board_length, colour==0?Colour::BLUE:Colour::RED, difficulty);
     ui->verticalLayout->addWidget(container);
+
+
 
 }
 
@@ -46,6 +50,8 @@ BoardView3D::~BoardView3D()
 {
     delete ui;
     delete squircle;
+    //delete crosshair;
+    //delete base;
 }
 
 // When the '2D Mode' button is clicked, it hides current window and goes back to the main window.

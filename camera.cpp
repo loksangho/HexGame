@@ -8,7 +8,13 @@ Camera::Camera(int width, int height, glm::vec3 position)
     Camera::width = width;
     Camera::height = height;
     Position = position;
+    //rubber_band_horizontal = new QRubberBand(QRubberBand::Line);
+    //rubber_band_vertical = new QRubberBand(QRubberBand::Line);
 
+    //rubber_band_horizontal->setAttribute(Qt::WA_TransparentForMouseEvents);
+    //rubber_band_vertical->setAttribute(Qt::WA_TransparentForMouseEvents);
+    //rubber_band_horizontal->unsetCursor();
+    //rubber_band_vertical->unsetCursor();
 
 }
 
@@ -52,25 +58,46 @@ void Camera::Delete() {
 #endif
 
 Camera::~Camera() {
-
+    /*if(rubber_band_horizontal)
+        delete rubber_band_horizontal;
+    if(rubber_band_vertical)
+        delete rubber_band_vertical;
+    rubber_band_horizontal = 0;
+    rubber_band_vertical = 0;*/
 }
 
 // Runs at every pass. When player clicks on the 3D window, the variable 'firstClick' is activated the tracks cursor movement. When Escape key is pressed, it exists the mode.
 // This is required as the cursor is locked in the middle of the window when in play.
 void Camera::Inputs(int screenPosX, int screenPosY, int mouseX, int mouseY, int press_key_esc, int press_key_w, int press_key_a, int press_key_s, int press_key_d, int left_mouse_click)
 {
+
     if(left_mouse_click==1) {
 
         if (firstClick)
         {
 
-           QGuiApplication::setOverrideCursor(Qt::BlankCursor);
+           QGuiApplication::setOverrideCursor(Qt::CrossCursor);
+/*#if defined(Q_OS_MAC)
+           rubber_band_horizontal->setGeometry(QRect(-screenPosX+(width / 2)-10, -screenPosY+(height / 2)-1, 20, 2));
+           if(rubber_band_horizontal->isHidden()) {
+               rubber_band_horizontal->show();
+           }
 
+           rubber_band_vertical->setGeometry(-screenPosX+(width / 2)-1, -screenPosY+(height / 2)-10, 2, 20);
+
+           if(rubber_band_vertical->isHidden()) {
+              rubber_band_vertical->show();
+           }
+#endif*/
            firstClick = false;
         }
     }
     if(press_key_esc==1) {
         firstClick = true;
+/*#if defined(Q_OS_MAC)
+        rubber_band_horizontal->hide();
+        rubber_band_vertical->hide();
+#endif*/
     }
     if(!firstClick){
 
@@ -126,13 +153,13 @@ void Camera::Inputs(int screenPosX, int screenPosY, int mouseX, int mouseY, int 
             speed = 0.1f;
         }*/
 #if defined(Q_OS_WIN) || defined(Q_OS_MAC)
-        if(mouseX < width/2-5 || mouseX > width/2 +5 ) {
+        /*if(mouseX < width/2-5 || mouseX > width/2 +5 ) {
             QCursor::setPos(-screenPosX+(width / 2), -screenPosY + mouseY);
         }
         if(mouseY < height/2-5 || mouseY > height/2+5) {
            QCursor::setPos(-screenPosX + mouseX, -screenPosY+(height / 2));
-        }
-            //QCursor::setPos(-screenPosX+(width / 2), -screenPosY+(height / 2));
+        }*/
+            QCursor::setPos(-screenPosX+(width / 2), -screenPosY+(height / 2));
 #endif
 
             float rotX = sensitivity*(float)(mouseY*1.0 - (height / 2)) / height;

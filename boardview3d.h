@@ -9,6 +9,7 @@
 #include <QWidget>
 #include <QMainWindow>
 #include "squircle.h"
+#include "overlaywidgetclass.h"
 
 namespace Ui {
 class BoardView3D;
@@ -22,9 +23,10 @@ public:
     explicit BoardView3D(QMainWindow* main_window, QWidget *parent = nullptr);
     void init(int board_length, int colour, int difficulty);
     ~BoardView3D();
-    QMainWindow* main_window;
-    Squircle* squircle;
-
+    QMainWindow* main_window = nullptr;
+    Squircle* squircle = nullptr;
+    //ContainerWidget* base = nullptr;
+    //CrossHairOverlay* crosshair = nullptr;
 
 private slots:
     void on_pushButton_clicked();
