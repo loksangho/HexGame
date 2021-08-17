@@ -17,6 +17,10 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     MainWindow w;
 
+#ifdef Q_OS_WIN
+    a.setWindowIcon(QIcon(":/hex_icon.ico"));
+#endif
+
     QFontDatabase::addApplicationFont(":/fonts/Copperplate.ttf");
     QFontDatabase::addApplicationFont(":/fonts/CopperplateBold.ttf");
 

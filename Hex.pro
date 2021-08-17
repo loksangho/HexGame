@@ -105,6 +105,8 @@ RESOURCES += \
 
 macx {
 
+    ICON = hex_icon.icns
+
     QMAKE_CXXFLAGS += -std=c++11
     QMAKE_CXXFLAGS += -stdlib=libc++
     QMAKE_CXXFLAGS += -I/usr/local/opt/openssl/include
@@ -155,7 +157,6 @@ unix:!macx {
 
 win32 {
     #QMAKE_CXXFLAGS += -D_WIN32_WINNT=0x0601
-
 
     INCLUDEPATH += "C:/Users/loksa/Documents/Hex/glm/"
     INCLUDEPATH += "C:/Users/loksa/Documents/Hex/websocketpp/"

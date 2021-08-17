@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>fonts/Copperplate.ttf</file>
         <file>fonts/CopperplateBold.ttf</file>
+        <file>hex_icon.ico</file>
     </qresource>
 </RCC>
