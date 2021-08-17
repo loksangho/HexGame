@@ -233,6 +233,8 @@ void OnlineGameBoardWindow::on_readyBbutton_clicked()
     std::string ret_msg;
     connect_web_socket_with_text("/ws/play/", data, &ret_msg);
 
+    std::cout << ret_msg << std::endl;
+
 
     boost::json::value val = boost::json::parse( ret_msg );
     boost::json::object v = val.as_object();

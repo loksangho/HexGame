@@ -464,7 +464,7 @@ void MainOnlineWindow::timeout() {
         online_game_board_window->gameid = this->cur_game_id;
         online_game_board_window->show_players();
         online_game_board_window->show();
-        progress->close();
+        progress->accept();
     }
 
 }
