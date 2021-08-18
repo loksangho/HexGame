@@ -157,6 +157,7 @@ unix:!macx {
 
 win32 {
     #QMAKE_CXXFLAGS += -D_WIN32_WINNT=0x0601
+    RC_ICONS = hex_icon.ico
 
     INCLUDEPATH += "C:/Users/loksa/Documents/Hex/glm/"
     INCLUDEPATH += "C:/Users/loksa/Documents/Hex/websocketpp/"
