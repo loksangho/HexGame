@@ -145,13 +145,13 @@ unix:!macx {
     INCLUDEPATH += /usr/include/bullet
     INCLUDEPATH += /usr/include/curl
     INCLUDEPATH += /usr/include/GL
-    INCLUDEPATH += /home/loksangho/boost_1_76_0
+    #INCLUDEPATH += /home/loksangho/boost_1_76_0
     INCLUDEPATH += /home/loksangho/bullet3/src
     INCLUDEPATH += "./websocketpp/"
     INCLUDEPATH += "./glm/"
     INCLUDEPATH += "./json/"
 
-    LIBS += -L/home/loksangho/boost_1_76_0/stage/lib
+    #LIBS += -L/home/loksangho/boost_1_76_0/stage/lib
     LIBS += -lboost_system -lcurl -lassimp -lBulletDynamics -lBulletCollision -lBulletSoftBody -lLinearMath -lGL
 }
 
